@@ -1,0 +1,1192 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>بوكسينج من الصفر</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cairo:wght@400;600;800;900&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: dark gym-deck hero and sticky nav over a cool canvas-grey field. Content sits in one centered wrap; sections are display-type headings over card grids. Blue = lead hand, red = rear hand, everywhere. */
+:root{
+  --bg:#EDF0F3; --fg:#12161C; --muted:#566170; --card:#FFFFFF; --line:#D2D9E1;
+  --blue:#1E4DB7; --red:#C42B2B; --on-blue:#FFFFFF; --on-red:#FFFFFF;
+  --blue-soft:#E3EBFA; --red-soft:#FBE6E4;
+  --deck:#11151B; --deck-fg:#F2F4F7; --deck-muted:#9AA6B6; --deck-blue:#7FA6FF; --deck-red:#FF7A6E; --deck-line:#2A323D;
+  --display:'Bebas Neue','Cairo',Impact,sans-serif;
+  --body:'Inter','Cairo',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1217; --fg:#E8ECF1; --muted:#98A3B2; --card:#171D25; --line:#29313C;
+    --blue:#7FA6FF; --red:#FF7A6E; --on-blue:#0E1217; --on-red:#0E1217;
+    --blue-soft:#1A2640; --red-soft:#3A1E1F; --deck:#080B0F; --deck-line:#222a34; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1217; --fg:#E8ECF1; --muted:#98A3B2; --card:#171D25; --line:#29313C;
+  --blue:#7FA6FF; --red:#FF7A6E; --on-blue:#0E1217; --on-red:#0E1217;
+  --blue-soft:#1A2640; --red-soft:#3A1E1F; --deck:#080B0F; --deck-line:#222a34; color-scheme:dark;
+}
+html[lang="ar"]{--display:'Cairo',system-ui,sans-serif;--body:'Cairo','Inter',system-ui,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font:16px/1.7 var(--body);margin:0;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--deck)}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1160px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,p,ol,ul{margin:0}
+ol,ul{padding-inline-start:1.25rem}
+li+li{margin-top:.3rem}
+
+/* hero */
+.hero{background:var(--deck);color:var(--deck-fg);margin-top:calc(-1 * env(safe-area-inset-top,0px));padding-top:calc(env(safe-area-inset-top,0px) + 2.5rem);padding-bottom:2.5rem}
+.hero h1{font:400 clamp(3.4rem,11vw,7.5rem)/.95 var(--display);letter-spacing:.02em;text-wrap:balance}
+html[lang="ar"] .hero h1{font-weight:900;letter-spacing:0;line-height:1.15}
+.hero p.sub{max-width:62ch;color:var(--deck-muted);font-size:1.1rem;margin-top:1rem}
+.punchrow{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem}
+.pk{display:flex;align-items:center;gap:.5rem;border:1px solid var(--deck-line);border-radius:8px;padding:.35rem .75rem .35rem .4rem;font-size:.9rem}
+html[dir="rtl"] .pk{padding:.35rem .4rem .35rem .75rem}
+.legend{margin-top:1rem;color:var(--deck-muted);font-size:.9rem;display:flex;gap:1rem;flex-wrap:wrap}
+.legend i{display:inline-block;width:.8rem;height:.8rem;border-radius:3px;margin-inline-end:.4rem;vertical-align:-1px}
+.herobtns{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.8rem}
+
+/* chips for punch numbers */
+.chip{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:2.1rem;height:2.1rem;padding:0 .5rem;border-radius:6px;font:400 1.35rem/1 var(--display);background:var(--line);color:var(--fg);flex:none;gap:0}
+html[lang="ar"] .chip{font-weight:800;font-size:1.05rem}
+.chip.l{background:var(--blue);color:var(--on-blue)}
+.chip.r{background:var(--red);color:var(--on-red)}
+.chip small{font:600 .55rem/1 var(--body);margin-top:-1px;letter-spacing:0}
+.chip.n{padding:0 .7rem;font:600 .8rem/1 var(--body);white-space:nowrap}
+.deck .chip.l,.hero .chip.l,.roul .chip.l{background:var(--deck-blue);color:#0b0f14}
+.deck .chip.r,.hero .chip.r,.roul .chip.r{background:var(--deck-red);color:#0b0f14}
+.deck .chip.n,.hero .chip.n,.roul .chip.n{background:#2a323d;color:var(--deck-fg)}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--deck);color:var(--deck-fg);border-bottom:1px solid var(--deck-line)}
+.navin{display:flex;align-items:center;gap:.6rem;padding-block:.55rem}
+.navin .chips{display:flex;gap:.35rem;overflow-x:auto;min-width:0;flex:1;scrollbar-width:thin;padding-block:2px}
+.navin .chips a{white-space:nowrap;text-decoration:none;font-size:.88rem;font-weight:600;padding:.3rem .7rem;border-radius:999px;border:1px solid var(--deck-line);color:var(--deck-fg)}
+.navin .chips a:hover{background:#242c37}
+.langbtn{flex:none;font:600 .85rem var(--body);background:var(--deck-fg);color:var(--deck);border:0;border-radius:6px;padding:.4rem .8rem;cursor:pointer}
+
+/* sections */
+section{padding-block:3.2rem;border-top:1px solid var(--line);scroll-margin-top:calc(3.6rem + env(safe-area-inset-top,0px))}
+section:first-child{border-top:0}
+.sh{margin-bottom:1.6rem}
+.sh h2{font:400 clamp(2.4rem,6vw,3.6rem)/1 var(--display);letter-spacing:.02em;text-wrap:balance}
+html[lang="ar"] .sh h2{font-weight:900;letter-spacing:0;line-height:1.25}
+.sh p{color:var(--muted);max-width:65ch;margin-top:.6rem}
+.sub2{font:700 1.15rem var(--body);margin:2rem 0 .9rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:1rem}
+.grid.sm{grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1.1rem 1.1rem 1rem;min-width:0;display:flex;flex-direction:column;gap:.7rem}
+.card.wide{grid-column:1/-1}
+.ch{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.ch h3{font:700 1.1rem/1.35 var(--body);flex:1;min-width:0}
+.tag{font-size:.72rem;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:.05rem .55rem;color:var(--muted);white-space:nowrap}
+.dose{align-self:flex-start;font-weight:700;font-size:.85rem;background:var(--red-soft);color:var(--red);border-radius:6px;padding:.1rem .6rem}
+.card .d{color:var(--muted);font-size:.95rem}
+.card h4{font:700 .72rem var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:.2rem 0 .35rem}
+html[lang="ar"] .card h4{letter-spacing:0;text-transform:none;font-size:.85rem}
+.card ol,.card ul{font-size:.95rem}
+.card .drill{font-size:.92rem;background:var(--blue-soft);border-radius:6px;padding:.55rem .7rem}
+.vid{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:auto;padding-top:.3rem}
+.vid a{display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;font-size:.82rem;font-weight:600;border:1px solid var(--line);border-radius:6px;padding:.3rem .65rem}
+.vid a:hover{border-color:var(--red);color:var(--red)}
+.vid svg{width:.7rem;height:.7rem;fill:var(--red)}
+.two{display:grid;grid-template-columns:1.1fr 1fr;gap:1rem;align-items:start}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
+.rules{columns:2 300px;column-gap:2rem}
+.rules li{break-inside:avoid;margin-bottom:.5rem}
+.path{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:.6rem;padding:0;list-style:none;counter-reset:p}
+.path li{counter-increment:p;margin:0}
+.path a{display:flex;gap:.7rem;align-items:center;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.7rem .8rem;font-weight:600}
+.path a::before{content:counter(p);font:400 1.4rem/1 var(--display);color:var(--red);min-width:1.2rem}
+.note{background:var(--card);border:1px solid var(--line);border-inline-start:4px solid var(--red);border-radius:8px;padding:.9rem 1rem;color:var(--muted);font-size:.95rem}
+svg.feet{width:100%;height:auto;max-width:420px;display:block;margin-inline:auto;direction:ltr}
+svg.feet text{font:600 12px var(--body);fill:var(--fg);text-anchor:middle}
+
+/* buttons / inputs */
+.btn{font:600 .95rem var(--body);background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:.55rem 1rem;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:hover{border-color:var(--fg)}
+.btn.p{background:var(--red);border-color:transparent;color:var(--on-red)}
+.btn.b{background:var(--blue);border-color:transparent;color:var(--on-blue)}
+.hero .btn{background:transparent;color:var(--deck-fg);border-color:var(--deck-line)}
+.hero .btn.p{background:var(--deck-red);color:#0b0f14;border-color:transparent}
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+.tabs .btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+input[type=number]{font:600 1rem var(--body);width:100%;padding:.5rem .6rem;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg)}
+label.f{display:flex;flex-direction:column;gap:.25rem;font-size:.85rem;font-weight:600;color:var(--muted)}
+
+/* combos */
+.combo{display:flex;flex-direction:column;gap:.6rem}
+.seq{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}
+.roul{background:var(--deck);color:var(--deck-fg);border-radius:10px;padding:1.4rem;margin-bottom:1.2rem}
+.roul .seq{gap:.6rem;min-height:3.6rem;margin:.8rem 0}
+.roul .chip{min-width:3.4rem;height:3.4rem;font-size:2.2rem}
+html[lang="ar"] .roul .chip{font-size:1.6rem}
+.roul .chip.n{font-size:.95rem}
+.roul p{color:var(--deck-muted)}
+.roul .btn{background:var(--deck-fg);color:var(--deck);border:0}
+.roul h3{font:700 .8rem var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--deck-muted)}
+html[lang="ar"] .roul h3{letter-spacing:0;text-transform:none;font-size:.95rem}
+
+/* timer */
+.tbox{border-radius:12px;padding:1.6rem 1rem;text-align:center;background:var(--deck);color:var(--deck-fg);transition:background .25s}
+.tbox.work{background:var(--red);color:var(--on-red)}
+.tbox.rest{background:var(--blue);color:var(--on-blue)}
+.tbox .ph{font:700 1rem var(--body);letter-spacing:.1em;text-transform:uppercase}
+html[lang="ar"] .tbox .ph{letter-spacing:0;text-transform:none;font-size:1.2rem}
+.tbox .tm{font:400 clamp(4.5rem,22vw,9rem)/1 'Bebas Neue',Impact,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.tbox .rd{font-weight:600;opacity:.9}
+.tctl{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:1rem}
+.tctl .btn{min-width:6.5rem;background:rgba(255,255,255,.14);color:inherit;border-color:rgba(255,255,255,.35)}
+.tcfg{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-top:1rem}
+.presets{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:1rem}
+
+/* checklist */
+.bar{height:10px;background:var(--line);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red);width:0;transition:width .25s}
+.chk label{display:flex;gap:.6rem;align-items:flex-start;cursor:pointer;font-size:.95rem}
+.chk input{width:1.15rem;height:1.15rem;margin-top:.25rem;accent-color:var(--red);flex:none}
+.chk ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:.5rem}
+.chk li{margin:0}
+.lvh{display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+.lvh span{font-weight:700;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+td,th{border-bottom:1px solid var(--line);padding:.5rem .6rem;text-align:start;vertical-align:top}
+th{font-size:.8rem;color:var(--muted)}
+.scroll{overflow-x:auto}
+footer{border-top:1px solid var(--line);padding-block:2rem 3rem;color:var(--muted);font-size:.9rem}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bar i,.tbox{transition:none}}
+
+/* ===== premium layer: depth, motion, new features ===== */
+:root{
+  --sh1:0 1px 2px rgba(18,22,28,.06),0 10px 28px -14px rgba(18,22,28,.22);
+  --sh2:0 2px 4px rgba(18,22,28,.08),0 26px 48px -20px rgba(18,22,28,.38);
+  --glowl:rgba(30,77,183,.45); --glowr:rgba(196,43,43,.42);
+  --deck-a:rgba(17,21,27,.84);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --sh1:0 1px 2px rgba(0,0,0,.4),0 12px 30px -14px rgba(0,0,0,.7);
+    --sh2:0 2px 6px rgba(0,0,0,.5),0 28px 50px -20px rgba(0,0,0,.85);
+    --glowl:rgba(127,166,255,.35); --glowr:rgba(255,122,110,.32); --deck-a:rgba(8,11,15,.84);
+  }
+}
+:root[data-theme="dark"]{
+  --sh1:0 1px 2px rgba(0,0,0,.4),0 12px 30px -14px rgba(0,0,0,.7);
+  --sh2:0 2px 6px rgba(0,0,0,.5),0 28px 50px -20px rgba(0,0,0,.85);
+  --glowl:rgba(127,166,255,.35); --glowr:rgba(255,122,110,.32); --deck-a:rgba(8,11,15,.84);
+}
+@keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes rise{from{transform:translateY(22px)}to{transform:none}}
+@keyframes drift1{from{transform:translate(0,0) scale(1)}to{transform:translate(-60px,70px) scale(1.15)}}
+@keyframes drift2{from{transform:translate(0,0) scale(1)}to{transform:translate(80px,-50px) scale(1.1)}}
+@keyframes shine{from{background-position:200% 0}to{background-position:-50% 0}}
+@keyframes sheen{from{background-position:0 0}to{background-position:300% 0}}
+@keyframes hit{0%,16%,100%{transform:none;box-shadow:none;border-color:var(--deck-line)}4%,9%{transform:translateY(-6px);border-color:var(--deck-fg);box-shadow:0 12px 26px -10px rgba(127,166,255,.6)}}
+@keyframes pop{from{transform:scale(.55);opacity:0}to{transform:none;opacity:1}}
+@keyframes pulse{50%{transform:scale(1.035)}}
+@keyframes bump{40%{transform:scale(1.35)}}
+
+/* hero */
+.hero{position:relative;overflow:hidden}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;filter:blur(90px);opacity:.28;pointer-events:none}
+.hero::before{width:440px;height:440px;background:var(--deck-red);top:-160px;inset-inline-end:-90px;animation:drift1 14s ease-in-out infinite alternate}
+.hero::after{width:400px;height:400px;background:var(--deck-blue);bottom:-190px;inset-inline-start:-110px;animation:drift2 17s ease-in-out infinite alternate}
+.hero .wrap{position:relative;z-index:1}
+.hero .wrap>*{animation:up .8s var(--ease) both}
+.hero .wrap>*:nth-child(2){animation-delay:.1s}.hero .wrap>*:nth-child(3){animation-delay:.2s}.hero .wrap>*:nth-child(4){animation-delay:.3s}.hero .wrap>*:nth-child(5){animation-delay:.4s}.hero .wrap>*:nth-child(6){animation-delay:.5s}.hero .wrap>*:nth-child(7){animation-delay:.6s}
+.hero .wrap>h1{color:var(--deck-fg);animation:up .8s var(--ease) both,shine 9s linear infinite}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .hero .wrap>h1{background:linear-gradient(100deg,#fff 18%,#9fb8ff 42%,#ff9b91 58%,#fff 82%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+}
+.pk{animation:hit 6.5s calc(var(--i) * .45s) infinite ease-in-out;background:rgba(255,255,255,.03)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:1rem;margin-top:1.8rem;max-width:640px}
+.stat{border-top:1px solid var(--deck-line);padding-top:.7rem}
+.stat b{display:block;font:400 clamp(2.2rem,6vw,3.2rem)/1 var(--display);font-variant-numeric:tabular-nums}
+html[lang="ar"] .stat b{font-weight:800}
+.stat span{color:var(--deck-muted);font-size:.85rem}
+.ropes{display:grid;gap:7px;margin-top:2.2rem}
+.ropes i{display:block;height:3px;border-radius:3px;opacity:.55;background:linear-gradient(90deg,var(--deck-red),#fff,var(--deck-blue),#fff,var(--deck-red)) 0 0/300% 100%;animation:sheen 7s linear infinite}
+.ropes i:nth-child(2){animation-delay:-2.3s}.ropes i:nth-child(3){animation-delay:-4.6s}
+.hero .btn.p{box-shadow:0 12px 28px -10px var(--glowr)}
+
+/* nav */
+.nav{background:var(--deck-a);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);box-shadow:0 10px 30px -18px rgba(0,0,0,.7)}
+.navin .chips a{transition:background .2s,color .2s,transform .2s}
+.navin .chips a:hover{transform:translateY(-1px)}
+.navin .chips a[aria-current="true"]{background:var(--deck-fg);color:var(--deck);border-color:var(--deck-fg)}
+.iconbtn{flex:none;width:2.1rem;height:2.1rem;border-radius:6px;border:1px solid var(--deck-line);background:transparent;color:var(--deck-fg);display:grid;place-items:center;cursor:pointer;transition:background .2s}
+.iconbtn:hover{background:#242c37}
+.sp{position:absolute;inset-inline:0;bottom:-1px;height:3px;pointer-events:none}
+.sp i{display:block;height:100%;background:linear-gradient(90deg,var(--deck-blue),var(--deck-red));transform:scaleX(0);transform-origin:left}
+html[dir="rtl"] .sp i{transform-origin:right}
+
+/* search */
+.searchwrap{padding-top:1.6rem}
+.search{display:flex;align-items:center;gap:.7rem;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.25rem 1rem;box-shadow:var(--sh1);color:var(--muted);transition:box-shadow .25s,border-color .25s}
+.search:focus-within{border-color:var(--blue);box-shadow:var(--sh2)}
+.search input{flex:1;min-width:0;border:0;background:transparent;font:500 1rem var(--body);color:var(--fg);padding:.7rem 0;outline:0}
+.search #qc{font-size:.85rem;font-weight:600;white-space:nowrap}
+
+/* depth and motion for content */
+section{padding-block:3.6rem}
+.sh h2::after{content:"";display:block;height:4px;width:0;margin-top:.7rem;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--red));transition:width .9s var(--ease) .2s}
+.sh.in h2::after{width:84px}
+.card{position:relative;overflow:hidden;box-shadow:var(--sh1);border-radius:12px;transition:transform .35s var(--ease),box-shadow .35s,border-color .3s}
+.card>*{position:relative;z-index:1}
+.card[data-n]::after{content:attr(data-n);position:absolute;z-index:0;inset-inline-end:.8rem;top:-.5rem;font:400 7rem/1 'Bebas Neue',Impact,sans-serif;opacity:.1;pointer-events:none}
+.card[data-h="l"]::after{color:var(--blue)}.card[data-h="r"]::after{color:var(--red)}
+.card:hover{transform:translateY(-5px);box-shadow:var(--sh2);border-color:var(--muted)}
+.card[data-h="l"]:hover{box-shadow:var(--sh2),0 22px 44px -22px var(--glowl)}
+.card[data-h="r"]:hover{box-shadow:var(--sh2),0 22px 44px -22px var(--glowr)}
+.rv.in{animation:rise .8s var(--d,0ms) var(--ease) backwards}
+.btn{transition:transform .18s var(--ease),box-shadow .25s,border-color .2s,background .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--sh1)}
+.btn:active{transform:scale(.96)}
+.btn.p{box-shadow:0 10px 22px -10px var(--glowr)}
+.vid a{transition:transform .2s,border-color .2s,color .2s}
+.vid a:hover{transform:translateY(-1px)}
+.path a{transition:transform .25s var(--ease),box-shadow .25s}
+.path a:hover{transform:translateY(-3px);box-shadow:var(--sh2)}
+.roul{box-shadow:var(--sh2);background:linear-gradient(135deg,var(--deck),#1b2230)}
+.roul .chip,.tbox .seq .chip{animation:pop .5s calc(var(--i,0) * 80ms) cubic-bezier(.3,1.6,.5,1) backwards}
+.tabs .btn[aria-pressed="true"]{box-shadow:var(--sh1)}
+.addbtn{flex:none;width:2rem;height:2rem;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--fg);font:700 1.15rem/1 var(--body);cursor:pointer;display:grid;place-items:center;transition:transform .25s var(--ease),background .2s,color .2s}
+.addbtn:hover{transform:scale(1.12);border-color:var(--red);color:var(--red)}
+.addbtn[aria-pressed="true"]{background:var(--red);color:var(--on-red);border-color:transparent;transform:scale(1.08)}
+
+/* timer ring */
+.tbox{box-shadow:var(--sh2);padding:1.8rem 1rem 1.6rem}
+.ringwrap{position:relative;width:min(78vw,300px);aspect-ratio:1;margin:0 auto}
+.ringwrap svg{position:absolute;inset:0;width:100%;height:100%}
+.ringwrap .rt{stroke:currentColor;opacity:.2}
+#tRing{transition:stroke-dashoffset .25s linear}
+.rin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.tbox .tm{font-size:clamp(3.6rem,17vw,5.8rem)}
+.tbox.hot .ringwrap{animation:pulse .9s ease-in-out infinite}
+.tbox .seq.call{justify-content:center;min-height:3.4rem;margin-top:1rem}
+.tbox .seq .chip{background:#fff;color:var(--blue);min-width:3rem;height:3rem;font-size:1.9rem}
+.tbox .seq .chip.r{background:#fff;color:#C42B2B}.tbox .seq .chip.l{background:#fff;color:#1E4DB7}
+html[lang="ar"] .tbox .seq .chip{font-size:1.4rem}
+.tbox .seq .chip.n{font-size:.9rem;color:#12161C}
+.sw{display:flex;gap:.55rem;align-items:center;font-size:.9rem;font-weight:600;cursor:pointer}
+.sw input{width:1.15rem;height:1.15rem;accent-color:var(--red)}
+select{font:600 1rem var(--body);width:100%;padding:.5rem .6rem;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg)}
+#tTot{margin-top:1rem;color:var(--muted);font-size:.9rem}
+
+/* log, heart rate */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.kpi{background:var(--bg);border-radius:8px;padding:.6rem .7rem}
+.kpi b{display:block;font:400 2.4rem/1 var(--display)}
+html[lang="ar"] .kpi b{font-weight:800}
+.kpi span{font-size:.78rem;color:var(--muted)}
+.lg{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.lg i{aspect-ratio:1;border-radius:7px;background:var(--line);display:grid;place-items:center;font:600 .62rem var(--body);font-style:normal;color:var(--muted)}
+.lg i.on{background:var(--red);color:var(--on-red);animation:pop .45s calc(var(--i) * 16ms) cubic-bezier(.3,1.6,.5,1) backwards}
+.lg i.today{outline:2px solid var(--fg);outline-offset:2px}
+.hz{display:grid;grid-template-columns:8rem 1fr 6.5rem;gap:.7rem;align-items:center;font-size:.88rem;padding-block:.3rem}
+.hz span:last-child{font-weight:700;text-align:end;font-variant-numeric:tabular-nums}
+.hb{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.hb i{display:block;height:100%;border-radius:999px;width:0;transition:width .9s var(--ease)}
+@media(max-width:520px){.hz{grid-template-columns:5.5rem 1fr auto}}
+
+/* floating controls, drawer, toast */
+.fab{position:fixed;z-index:60;inset-block-end:calc(1rem + env(safe-area-inset-bottom,0px));inset-inline-end:calc(1rem + env(safe-area-inset-right,0px) + env(safe-area-inset-left,0px));width:3.3rem;height:3.3rem;border-radius:50%;border:0;background:var(--red);color:var(--on-red);display:grid;place-items:center;cursor:pointer;box-shadow:var(--sh2),0 14px 30px -10px var(--glowr);transition:transform .25s var(--ease)}
+.fab:hover{transform:scale(1.08)}
+.fab.top{inset-block-end:calc(5rem + env(safe-area-inset-bottom,0px));width:2.7rem;height:2.7rem;background:var(--card);color:var(--fg);border:1px solid var(--line);opacity:0;pointer-events:none;transform:translateY(12px);box-shadow:var(--sh1);margin-inline-end:.3rem}
+.fab.top.show{opacity:1;pointer-events:auto;transform:none}
+.badge{position:absolute;top:-4px;inset-inline-end:-4px;min-width:1.3rem;height:1.3rem;padding:0 .25rem;border-radius:999px;background:var(--fg);color:var(--bg);font:700 .72rem var(--body);display:grid;place-items:center}
+.badge.bump{animation:bump .4s var(--ease)}
+.scrim{position:fixed;inset:0;z-index:65;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;inset-inline:0;bottom:0;z-index:70;max-height:78vh;max-width:640px;margin-inline:auto;overflow:auto;background:var(--card);color:var(--fg);border-radius:18px 18px 0 0;box-shadow:0 -24px 70px rgba(0,0,0,.4);padding:1.1rem max(16px,env(safe-area-inset-left,0px)) calc(1.1rem + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px));transform:translateY(105%);visibility:hidden;transition:transform .4s var(--ease),visibility 0s .4s}
+.drawer.open{transform:none;visibility:visible;transition-delay:0s}
+.dh{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem}
+.dh h3{font:700 1.2rem var(--body)}
+.x{width:2rem;height:2rem;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--fg);font-size:1.1rem;cursor:pointer}
+.x:hover{border-color:var(--red);color:var(--red)}
+.sl{list-style:none;padding:0;display:flex;flex-direction:column;gap:.45rem}
+.sl li{display:flex;align-items:center;gap:.7rem;background:var(--bg);border-radius:8px;padding:.5rem .7rem;margin:0}
+.sl li>div{flex:1;min-width:0}
+.sl small{display:block;color:var(--muted)}
+.sl .si{font:400 1.4rem/1 var(--display);color:var(--red);min-width:1.3rem;text-align:center}
+.sl .empty{color:var(--muted);justify-content:center;padding:1.2rem}
+.df{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem}
+#sessTxt{width:100%;margin-top:.7rem;font:.85rem var(--body);background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:.6rem}
+.toast{position:fixed;z-index:80;inset-inline:0;margin-inline:auto;width:max-content;max-width:88vw;bottom:calc(5.2rem + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);font-weight:600;font-size:.9rem;padding:.55rem 1.1rem;border-radius:999px;box-shadow:var(--sh2);opacity:0;transform:translateY(12px);transition:opacity .25s,transform .3s var(--ease);pointer-events:none}
+.toast.show{opacity:1;transform:none}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .hero .wrap>h1{background:none;color:var(--deck-fg)}
+  .sh h2::after{width:84px}
+}
+</style>
+
+<header class="hero deck"><div class="wrap" id="heroIn"></div></header>
+<nav class="nav" aria-label="sections"><div class="wrap navin" id="navIn"></div><div class="sp" id="sp"><i></i></div></nav>
+<div class="wrap searchwrap"><label class="search"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" autocomplete="off"><span id="qc" aria-live="polite"></span></label></div>
+<main><div class="wrap" id="app"></div></main>
+<footer><div class="wrap" id="foot"></div></footer>
+<button class="fab top" id="fabTop" type="button" data-act="top"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<button class="fab" id="fabSess" type="button" data-act="drawer"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg><span class="badge" id="sessN">0</span></button>
+<div class="scrim" id="scrim" data-act="drawer"></div>
+<aside class="drawer" id="drawer" aria-hidden="true"><div class="dh"><h3 id="dTitle"></h3><button class="x" id="dClose" type="button" data-act="drawer">&times;</button></div><ol class="sl" id="sessList"></ol><textarea id="sessTxt" readonly hidden rows="5"></textarea><div class="df"><button class="btn p" id="bCopy" type="button" data-act="copy"></button><a class="btn" id="bTimer" href="#timer" data-act="drawer"></a><button class="btn" id="bClear" type="button" data-act="clearSess"></button></div></aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+/* ---------- language + storage ---------- */
+let L = 0; /* 0 = Arabic, 1 = English */
+let DONE = {};
+try { const s = localStorage.getItem("bx-lang"); if (s === "en") L = 1; DONE = JSON.parse(localStorage.getItem("bx-done") || "{}") || {}; } catch (e) {}
+const T = a => a[L];
+const li = a => a.map(x => "<li>" + T(x) + "</li>").join("");
+const yt = q => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
+const PLAY = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg>';
+
+const UI = {
+  vidAr: ["فيديو بالعربي", "Video (Arabic)"], vidEn: ["فيديو بالإنجليزي", "Video (English)"],
+  steps: ["الخطوات", "Steps"], mist: ["أخطاء شائعة", "Common mistakes"], drill: ["تمرين", "Drill"],
+  lang: ["English", "العربية"]
+};
+const LV = { b: ["مبتدئ", "Beginner"], i: ["متوسط", "Intermediate"], a: ["متقدم", "Advanced"] };
+
+/* ---------- content ---------- */
+const SEC = [
+  ["start", ["ابدأ", "Start"]], ["wraps", ["البانداج", "Wraps"]], ["stance", ["الوقفة", "Stance"]],
+  ["warmup", ["التسخين", "Warm-up"]], ["punches", ["الضربات", "Punches"]], ["defense", ["الدفاع", "Defense"]],
+  ["combos", ["الكومبوز", "Combos"]], ["bag", ["الشوال", "Bag"]], ["bands", ["الأستك", "Bands"]],
+  ["fitness", ["اللياقة", "Fitness"]], ["plan", ["الخطة", "Plan"]], ["timer", ["التايمر", "Timer"]],
+  ["tools", ["السجل", "Log"]], ["check", ["التشيك", "Check"]], ["recovery", ["التعافي", "Recovery"]], ["glossary", ["القاموس", "Glossary"]]
+];
+
+const GEAR = [
+  { n: ["الشوال الثقيل", "Heavy bag"], d: ["علّقه بحيث يكون منتصفه عند مستوى الصدر تقريبًا وأعلاه قرب الرأس، وتأكد أن الحامل ثابت تمامًا.", "Hang it so the middle sits around chest height and the top near head height. Make sure the mount is solid."], q: ["تعليق الشوال الملاكمة الارتفاع المناسب", "how to hang a heavy bag correct height"] },
+  { n: ["القفازات", "Gloves"], d: ["للشوال استخدم قفازات 12 إلى 16 أونصة حسب وزنك. لا تضرب الشوال بيد عارية، واستبدل القفازات لما تتسطح الحشوة.", "For the bag use 12 to 16 oz gloves depending on body weight. Never hit the bag bare-handed, and replace gloves once the padding flattens."], q: ["اختيار قفازات الملاكمة للمبتدئين", "how to choose boxing gloves beginners"] },
+  { n: ["البانداج", "Hand wraps"], d: ["يثبت الرسغ ويحمي عظام الكف. الطول المعتاد 4.5 متر (180 بوصة). ابدأ به دائمًا قبل القفازات.", "Supports the wrist and protects the small bones of the hand. A common length is 4.5 m (180 in). Always wrap before gloves."], q: ["اختيار بانداج الملاكمة", "boxing hand wraps guide"] },
+  { n: ["أستك المقاومة", "Resistance bands"], d: ["ثبّته في باب أو عمود قوي. افحصه قبل كل استخدام بحثًا عن شقوق، ولا تشده قرب وجهك.", "Anchor it to a solid door or post. Check for cracks before each use and keep it away from your face when stretched."], q: ["تمارين استك المقاومة للملاكمة", "resistance band exercises for boxers"] }
+];
+const SAFE = [
+  ["لف البانداج دائمًا قبل لبس القفازات.", "Always wrap your hands before putting on gloves."],
+  ["سخّن 8 إلى 10 دقائق قبل أي تمرين.", "Warm up for 8 to 10 minutes before every session."],
+  ["اضرب بنصف قوتك في أول 2 إلى 3 أسابيع. التكنيك قبل القوة.", "Hit at about half power for the first 2 to 3 weeks. Technique before power."],
+  ["حافظ على الرسغ مستقيمًا وقت الارتطام.", "Keep the wrist straight at impact."],
+  ["لا سبارينج بدون مدرب وبدون خوذة وواقي أسنان.", "No sparring without a coach, headgear and a mouthguard."],
+  ["توقف فورًا عند ألم حاد في الرسغ أو الكتف أو المرفق.", "Stop immediately on sharp pain in the wrist, shoulder or elbow."],
+  ["خذ يوم راحة بين الحصص واشرب ماء قبل وأثناء وبعد التمرين.", "Take rest days between sessions and drink water before, during and after."],
+  ["لو عندك إصابة أو مرض مزمن، استشر طبيبك قبل البدء.", "If you have an injury or a medical condition, check with your doctor first."]
+];
+const PATH = [
+  ["wraps", ["تعلم لف البانداج", "Learn to wrap your hands"]], ["stance", ["الوقفة والحركة", "Stance and footwork"]],
+  ["warmup", ["التسخين الصحيح", "A proper warm-up"]], ["punches", ["الجاب والكروس أولًا", "Jab and cross first"]],
+  ["punches", ["ثم الهوك والأبركت", "Then hooks and uppercuts"]], ["defense", ["تعلم الدفاع", "Learn defense"]],
+  ["combos", ["اربط الضربات في كومبوز", "Chain punches into combos"]], ["bag", ["طبّق على الشوال", "Apply it on the bag"]],
+  ["bands", ["قوِّ جسمك بالأستك واللياقة", "Get stronger with bands and fitness"]], ["plan", ["اتبع خطة 12 أسبوع", "Follow the 12-week plan"]]
+];
+
+const WRAP = {
+  n: ["لف البانداج خطوة بخطوة", "Wrapping your hands, step by step"],
+  d: ["الأسلوب المعتاد: لفّات للرسغ ثم الأصابع ثم الإبهام. يجب أن تكون اللفة مشدودة دون أن تقطع الدم عن الأصابع.", "The standard method: wrist, knuckles, thumb, then fingers. The wrap should be snug without cutting circulation."],
+  s: [
+    ["ضع حلقة الإبهام في إبهامك واجعل القماش مسطحًا، والكف لأسفل وأصابعك مفتوحة.", "Slip the thumb loop over your thumb with the cloth flat, palm down and fingers spread."],
+    ["لف الرسغ 3 مرات وهو في وضع مستقيم.", "Wrap the wrist 3 times, keeping it straight."],
+    ["اصعد لتغطية ظهر اليد، ثم لف مفاصل الأصابع (الدراجز) 3 مرات.", "Come up over the back of the hand, then wrap around the knuckles 3 times."],
+    ["لف حول الإبهام مرة أو مرتين ثم عد إلى ظهر اليد.", "Wrap around the thumb once or twice and return across the back of the hand."],
+    ["مرر القماش بين الأصابع: الخنصر والبنصر، ثم البنصر والوسطى، ثم الوسطى والسبابة، وفي كل مرة ارجع عبر ظهر اليد.", "Weave between the fingers: pinky–ring, ring–middle, middle–index, returning across the back of the hand each time."],
+    ["أنهِ بلفّات إضافية حول الرسغ وثبّت الفيلكرو.", "Finish with extra turns around the wrist and secure the Velcro."]
+  ],
+  m: [["لفّة مرخية تتحرك داخل القفاز", "A loose wrap that shifts inside the glove"], ["لفّة شديدة تسبب تنميلًا", "Too tight, causing tingling"], ["ترك المفاصل بدون تغطية كافية", "Not enough layers over the knuckles"]],
+  q: ["طريقة لف البانداج للملاكمة خطوة بخطوة", "how to wrap hands for boxing step by step"]
+};
+
+const STANCE = {
+  n: ["الوقفة الأساسية (أورثودوكس)", "The basic stance (orthodox)"],
+  d: ["لو أنت يمني تقف باليسار أمامًا (أورثودوكس). لو أنت أعسر اعكس كل شيء (ساوثباو). لتعرف قدمك الأمامية: اطلب من أحد دفعك بخفة من الخلف، والقدم التي تخطو بها هي الأمامية.", "If you are right-handed you stand with the left foot forward (orthodox). If you are left-handed, mirror everything (southpaw). To find your lead foot, have someone give you a light push from behind; the foot you step with is your lead foot."],
+  s: [
+    ["القدمان أوسع قليلًا من الكتفين، القدم الأمامية للأمام والخلفية خلفها جانبًا بزاوية تقارب 45 درجة.", "Feet slightly wider than shoulders, lead foot forward, rear foot behind and to the side at roughly 45 degrees."],
+    ["كعب القدم الخلفية مرفوع قليلًا والوزن على مقدمة القدمين، موزع بين الأمام والخلف.", "Rear heel slightly raised, weight on the balls of both feet, shared between front and back."],
+    ["الركبتان مثنيتان قليلًا والجذع مستقيم والكتفان مرتخيان.", "Knees slightly bent, torso upright, shoulders relaxed."],
+    ["اليد الخلفية عند الذقن، والأمامية أمام الوجه بمستوى العين، والمرفقان قريبان من الضلوع.", "Rear hand at the chin, lead hand in front of the face at eye level, elbows close to the ribs."],
+    ["الذقن مخبأ للأسفل، والعينان تنظران من فوق القفاز الأمامي.", "Chin tucked, eyes looking over the lead glove."]
+  ],
+  m: [["الوقوف على قدمين متباعدتين على خط واحد", "Feet on one straight line"], ["الكعبان ملتصقان بالأرض بلا حركة", "Flat feet, no bounce"], ["نزول اليدين عند الضرب", "Hands dropping when punching"]],
+  q: ["وقفة الملاكمة الصحيحة للمبتدئين", "boxing stance for beginners"]
+};
+const FOOT = [
+  { n: ["الخطوة للأمام", "Step forward"], s: [["حرّك القدم الأمامية أولًا خطوة صغيرة.", "Move the lead foot first, a small step."], ["اسحب القدم الخلفية بنفس المسافة.", "Drag the rear foot the same distance."], ["ارجع للوقفة بنفس العرض.", "Land back in the same stance width."]] },
+  { n: ["الخطوة للخلف", "Step back"], s: [["حرّك القدم الخلفية أولًا.", "Move the rear foot first."], ["اسحب الأمامية لتعود المسافة بين القدمين.", "Pull the lead foot back to restore the gap."], ["حافظ على الحراسة أثناء التراجع.", "Keep your guard up while retreating."]] },
+  { n: ["الحركة الجانبية", "Side step"], s: [["حرّك القدم الأقرب للاتجاه أولًا.", "Move the foot closest to the direction first."], ["لحقها بالأخرى دون أن تتقاطع القدمان.", "Follow with the other foot without crossing."], ["تحرك على مقدمة القدمين.", "Stay on the balls of your feet."]] },
+  { n: ["الدوران (بيفوت)", "Pivot"], s: [["ثبّت مقدمة القدم الأمامية على الأرض.", "Plant the ball of the lead foot."], ["حرّك القدم الخلفية حولها قوسًا صغيرًا.", "Swing the rear foot in a small arc around it."], ["اضرب أو دافع من الزاوية الجديدة.", "Punch or defend from the new angle."]] },
+  { n: ["التحرك حول الشوال", "Circling the bag"], s: [["اضرب جاب ثم خطوة جانبية.", "Throw a jab, then side-step."], ["دُر حول الشوال في اتجاه واحد جولة كاملة.", "Circle the bag in one direction for a full round."], ["بدّل الاتجاه كل جولة.", "Switch direction each round."]] }
+];
+
+const WARM = [
+  { n: ["نط الجاك (Jumping jacks)", "Jumping jacks"], dose: ["60 ثانية", "60 sec"], d: ["ارفع حرارة الجسم وسرّع النبض.", "Raises body temperature and heart rate."] },
+  { n: ["ركبة عالية", "High knees"], dose: ["30 ثانية", "30 sec"], d: ["ارفع الركبتين لمستوى الوسط بإيقاع سريع.", "Drive knees to waist height at a quick pace."] },
+  { n: ["ركل الخلف (Butt kicks)", "Butt kicks"], dose: ["30 ثانية", "30 sec"], d: ["حرك الكعبين نحو المؤخرة بالتناوب.", "Flick heels toward glutes, alternating."] },
+  { n: ["دوران الرقبة", "Neck half-circles"], dose: ["5 في كل اتجاه", "5 each way"], d: ["حركة بطيئة من كتف لكتف، لا تدر الرأس للخلف بقوة.", "Slow, shoulder to shoulder. Do not force the head backward."] },
+  { n: ["دوران الكتفين", "Shoulder circles"], dose: ["10 أمام + 10 خلف", "10 forward + 10 back"], d: ["دوائر كبيرة ببطء.", "Big, slow circles."] },
+  { n: ["دوران الذراعين", "Arm circles"], dose: ["15 لكل اتجاه", "15 each way"], d: ["ابدأ بدوائر صغيرة ثم كبّرها.", "Start small and grow the circles."] },
+  { n: ["دوران الرسغين", "Wrist circles"], dose: ["10 لكل اتجاه", "10 each way"], d: ["مهم جدًا قبل اللف والضرب.", "Essential before wrapping and punching."] },
+  { n: ["لف الجذع", "Torso twists"], dose: ["20 مرة", "20 reps"], d: ["لف الكتفين والورك معًا بإيقاع هادئ.", "Rotate shoulders and hips together at an easy pace."] },
+  { n: ["دوران الحوض", "Hip circles"], dose: ["10 لكل اتجاه", "10 each way"], d: ["ارسم دوائر واسعة بالحوض.", "Draw wide circles with the hips."] },
+  { n: ["تأرجح الساق", "Leg swings"], dose: ["10 لكل ساق", "10 per leg"], d: ["أمام وخلف ثم جانبي مع الاستناد إلى الحائط.", "Front-back, then side-to-side, holding a wall."] },
+  { n: ["سكوات بوزن الجسم", "Bodyweight squats"], dose: ["15 مرة", "15 reps"], d: ["الظهر مستقيم والركبتان باتجاه القدمين.", "Back straight, knees tracking over the feet."] },
+  { n: ["اندفاع مع لف (Lunge twist)", "Walking lunge with twist"], dose: ["10 لكل ساق", "10 per leg"], d: ["اندفع للأمام ولف الجذع نحو الساق الأمامية.", "Lunge forward and rotate toward the lead leg."] },
+  { n: ["دودة المشي (Inchworm)", "Inchworm"], dose: ["6 مرات", "6 reps"], d: ["امش بيديك للأمام ثم اجلب القدمين.", "Walk hands out, then bring the feet in."] },
+  { n: ["شد الأستك للخارج (Pull-apart)", "Band pull-aparts"], dose: ["15 مرة", "15 reps"], d: ["يجهز الكتفين والظهر العلوي.", "Wakes up the shoulders and upper back."] },
+  { n: ["دوران خارجي بالأستك", "Band external rotation"], dose: ["12 لكل ذراع", "12 per arm"], d: ["المرفق ملتصق بالجسم، أدر الساعد للخارج.", "Elbow pinned to the side, rotate the forearm outward."] },
+  { n: ["شادو بوكسينج خفيف", "Light shadowboxing"], dose: ["جولتان × دقيقتين", "2 × 2 min"], d: ["جولة 1: جاب وكروس بخفة. جولة 2: أضف الهوك والدفاع والحركة.", "Round 1: easy jab and cross. Round 2: add hooks, defense and movement."] }
+];
+
+const PUNCH = [
+  { num: 1, hand: "l", lv: "b", n: ["الجاب", "Jab"], d: ["أسرع ضربة وأهمها. تقيس المسافة وتفتح الطريق لباقي الضربات.", "Your fastest and most important punch. It measures distance and sets up everything else."],
+    s: [["من الوقفة مدّ اليد الأمامية بخط مستقيم نحو الهدف.", "From your stance, shoot the lead hand straight at the target."], ["في آخر الحركة لف القبضة لتصير الكف لأسفل وارفع الكتف الأمامي نحو الذقن.", "At the end, turn the fist palm-down and raise the lead shoulder toward your chin."], ["أعد اليد بنفس الخط وبسرعة، واليد الخلفية ثابتة عند الذقن.", "Snap the hand back along the same line while the rear hand stays at your chin."]],
+    m: [["إنزال اليد الخلفية", "Dropping the rear hand"], ["سحب اليد للخلف قبل الضربة", "Pulling the hand back before punching"], ["ترك الذراع ممدودة بعد الضربة", "Leaving the arm extended afterward"]],
+    r: ["3 جولات × دقيقتين جاب فقط. قف بحيث تلمس قبضتك الممدودة الشوال.", "3 × 2-minute rounds of jab only. Stand where your extended fist just touches the bag."], q: ["الجاب في الملاكمة للمبتدئين", "how to throw a jab boxing"] },
+  { num: 2, hand: "r", lv: "b", n: ["الكروس", "Cross"], d: ["ضربة القوة المستقيمة. القوة تنتقل من الأرض عبر الورك والكتف.", "Your straight power punch. Power travels from the floor through hip and shoulder."],
+    s: [["ادفع بالقدم الخلفية وأدِر الكعب والورك والكتف الخلفي نحو الهدف.", "Push off the rear foot and rotate the rear heel, hip and shoulder toward the target."], ["مدّ اليد الخلفية مستقيمة والكف لأسفل في النهاية، والذقن خلف الكتف.", "Extend the rear hand straight, palm down at the end, chin behind the shoulder."], ["ارجع بسرعة للوقفة واليد الأمامية تحمي الوجه طوال الوقت.", "Return quickly to your stance; the lead hand guards your face throughout."]],
+    m: [["ضربة بالذراع فقط بدون لف الجسم", "Arm-only punch with no rotation"], ["الميل للأمام وفقدان التوازن", "Leaning forward and losing balance"], ["رفع الذقن", "Lifting the chin"]],
+    r: ["3 جولات × دقيقتين: 1-2 بسرعة متوسطة وتركيز على الدوران.", "3 × 2-minute rounds of 1-2 at medium speed, focusing on rotation."], q: ["الكروس في الملاكمة", "how to throw a cross boxing"] },
+  { num: 3, hand: "l", lv: "b", n: ["الهوك الأمامي", "Lead hook"], d: ["ضربة دائرية قصيرة للرأس أو الجسم. تعتمد على دوران الجسم وليس الذراع.", "A short circular punch to the head or body. Powered by body rotation, not the arm."],
+    s: [["ارفع المرفق الأمامي لتبقى الذراع بزاوية ثابتة نحو 90 درجة والمرفق قرب مستوى الكتف.", "Raise the lead elbow so the arm holds a fixed angle of about 90 degrees, elbow near shoulder height."], ["ثبّت القدم الأمامية وأدِر الكعب والورك والجذع للداخل.", "Pivot on the lead foot, rotating heel, hips and torso inward."], ["اضرب والساعد موازٍ للأرض ثم أعد اليد للحراسة.", "Land with the forearm parallel to the floor, then return to guard."]],
+    m: [["فتح الذراع فتصير الضربة واسعة", "Swinging the arm wide"], ["إنزال المرفق", "Dropping the elbow"], ["الميل للخلف أثناء الدوران", "Leaning back while rotating"]],
+    r: ["جولتان 1-2-3 بتركيز على الدوران، وجولة هوك للجسم مع ثني الركبتين.", "2 rounds of 1-2-3 focusing on rotation, 1 round of body hooks bending the knees."], q: ["الهوك الأمامي في الملاكمة", "how to throw a lead hook boxing"] },
+  { num: 4, hand: "r", lv: "i", n: ["الهوك الخلفي", "Rear hook"], d: ["هوك باليد الخلفية. أبطأ وأثقل، لذلك استخدمه بعد ضربات تفتح الدفاع.", "A hook with the rear hand. Slower and heavier, so use it after punches that open the guard."],
+    s: [["ارفع المرفق الخلفي بزاوية ثابتة.", "Raise the rear elbow at a fixed angle."], ["أدِر على القدم الخلفية وانقل الوزن للأمامية مع دوران الورك.", "Pivot on the rear foot and shift weight to the lead leg as the hips rotate."], ["اضرب ثم عد فورًا للحراسة.", "Land, then return to guard immediately."]],
+    m: [["مسار واسع من بعيد", "Wide, looping path"], ["نسيان اليد الأمامية في الحماية", "Forgetting to guard with the lead hand"]],
+    r: ["جولتان: 3-4-3 بنصف القوة ثم زد السرعة تدريجيًا.", "2 rounds of 3-4-3 at half power, then add speed gradually."], q: ["الهوك الخلفي في الملاكمة", "how to throw a rear hook boxing"] },
+  { num: 5, hand: "l", lv: "i", n: ["الأبركت الأمامي", "Lead uppercut"], d: ["ضربة صاعدة قصيرة تحت الذقن أو للجسم، فعالة في المسافة القريبة.", "A short upward punch to the chin or body, effective at close range."],
+    s: [["اثنِ الركبتين قليلًا وأنزل الكتف الأمامي.", "Bend the knees slightly and dip the lead shoulder."], ["ادفع من الساقين لأعلى مع لف بسيط للورك؛ الكف تواجهك.", "Drive up through the legs with a small hip turn; palm faces you."], ["اجعل المسار قصيرًا بحوالي نصف طول الذراع وعد للحراسة.", "Keep the path short, about half an arm's length, then return to guard."]],
+    m: [["إنزال اليد كثيرًا قبل الضربة", "Dropping the hand too low first"], ["استخدام الذراع فقط", "Using only the arm"]],
+    r: ["جولتان: 1-2-5-2 من مسافة قريبة.", "2 rounds of 1-2-5-2 from close range."], q: ["الأبركت في الملاكمة", "how to throw an uppercut boxing"] },
+  { num: 6, hand: "r", lv: "i", n: ["الأبركت الخلفي", "Rear uppercut"], d: ["يصل للذقن من المسافة القريبة ويُستخدم داخل الكومبوهات.", "Reaches the chin at close range and works inside combinations."],
+    s: [["اثنِ الركبتين وأنزل الكتف الخلفي قليلًا.", "Bend the knees and dip the rear shoulder slightly."], ["ادفع من القدم الخلفية وأدِر الورك لأعلى؛ الكف تواجهك.", "Drive from the rear foot and rotate the hip upward; palm faces you."], ["ارجع للحراسة والذقن مخبأ.", "Return to guard with the chin tucked."]],
+    m: [["ابتعاد اليد عن الجسم", "Hand drifting away from the body"], ["الانحناء من الخصر بدل ثني الركبتين", "Bending at the waist instead of the knees"]],
+    r: ["جولتان: 1-6-3-2 بسرعة متوسطة.", "2 rounds of 1-6-3-2 at medium speed."], q: ["الأبركت الخلفي في الملاكمة", "rear uppercut boxing technique"] },
+  { num: 0, hand: "n", lv: "i", n: ["ضربات الجسم", "Body shots"], d: ["أي ضربة يمكن توجيهها للجسم. السر في ثني الركبتين لتنزل بمستوى الهدف.", "Any punch can go to the body. The secret is bending the knees to drop to the target's level."],
+    s: [["اثنِ الركبتين وانزل بجسمك دون ثني الظهر.", "Bend the knees to drop level, keeping your back straight."], ["نفّذ الهوك أو الكروس للجسم بنفس الدوران.", "Throw the hook or cross to the body with the same rotation."], ["اصعد للوقفة وارفع الرأس بعد الضربة.", "Come back up to your stance after the punch."]],
+    m: [["الانحناء من الخصر", "Bending at the waist"], ["ترك الرأس على خط الضربة", "Leaving the head on the centerline"]],
+    r: ["جولة: جاب للرأس ثم هوك جسم ثم هوك رأس (1-3 جسم-3).", "1 round: jab to the head, hook to the body, hook to the head."], q: ["ضربات الجسم في الملاكمة", "body punches boxing technique"] }
+];
+
+const DEF = [
+  { lv: "b", n: ["الحراسة العالية (بلوك)", "High guard (block)"], d: ["أبسط دفاع: القفازات عند الخدين والمرفقان للداخل لامتصاص الضربات.", "The simplest defense: gloves at the cheeks, elbows in to absorb punches."],
+    s: [["ضم القفازات إلى الخدين والمرفقين إلى الضلوع.", "Gloves to the cheeks, elbows to the ribs."], ["ابقِ عينيك ترى من فوق القفازات.", "Keep your eyes looking over the gloves."], ["لضربات الجسم أنزل المرفقين لتغطية الضلوع.", "For body shots drop the elbows to cover the ribs."]],
+    m: [["إغماض العينين", "Closing the eyes"], ["إبعاد القفازات عن الوجه", "Gloves drifting away from the face"]],
+    r: ["أمام المرآة: حافظ على الحراسة جولتين وأنت تتحرك.", "In a mirror: hold your guard for 2 rounds while moving."], q: ["الحراسة في الملاكمة البلوك", "boxing high guard blocking"] },
+  { lv: "b", n: ["الصد (Parry)", "Parry"], d: ["ضربة صغيرة بالكف تحرف الضربة القادمة عن مسارها.", "A small palm tap that redirects an incoming punch."],
+    s: [["حرّك الكف بحركة قصيرة جانبية دون مد الذراع.", "Tap with a short sideways palm movement without reaching."], ["أبقِ اليد الأخرى عند الذقن.", "Keep the other hand at your chin."], ["اردّ مباشرة بكروس أو جاب.", "Counter straight away with a cross or jab."]],
+    m: [["حركة كبيرة تكشف الجسم", "A big movement that exposes you"], ["النظر للقفاز بدل الخصم", "Watching the glove instead of the opponent"]],
+    r: ["شادو: صد ثم 2-3. مع شريك: جاب خفيف 30% وأنت تصد.", "Shadow: parry then 2-3. With a partner: light jabs at 30% while you parry."], q: ["الصد parry في الملاكمة", "boxing parry defense tutorial"] },
+  { lv: "i", n: ["الانزلاق (Slip)", "Slip"], d: ["تحريك الرأس عن خط الضربة بثني الركبتين ولف الكتفين.", "Moving the head off the punch's line by bending the knees and rotating the shoulders."],
+    s: [["اثنِ الركبتين قليلًا وأدِر الكتف فيتحرك الرأس بعرض رأس تقريبًا.", "Bend the knees slightly and rotate a shoulder so the head moves about one head-width."], ["انظر للأمام وابقِ اليدين مرفوعتين.", "Keep your eyes forward and hands up."], ["عد للمركز فورًا وردّ بضربة.", "Return to center and counter straight away."]],
+    m: [["الميل من الخصر", "Leaning from the waist"], ["إغماض العينين", "Closing the eyes"], ["الانزلاق كثيرًا وفقدان التوازن", "Slipping too far and losing balance"]],
+    r: ["أمام المرآة: انزلاق يمين ويسار جولتين ثم أضف ضربة بعد كل انزلاق.", "In a mirror: slip left and right for 2 rounds, then add a punch after each slip."], q: ["الانزلاق slip في الملاكمة", "how to slip punches boxing"] },
+  { lv: "i", n: ["الانحناء تحت الضربة (Bob & weave)", "Bob and weave"], d: ["النزول تحت الهوك بحركة على شكل حرف U.", "Ducking under hooks in a U-shaped path."],
+    s: [["اثنِ الركبتين وانزل بمستوى الكتفين.", "Bend the knees and drop to shoulder level."], ["حرّك الرأس على شكل U وأخرجه خارج مسار الهوك.", "Move the head in a U and out the far side of the hook's path."], ["اصعد مباشرة بضربة: كروس للجسم أو هوك.", "Come up with a punch: cross to the body or a hook."]],
+    m: [["الانحناء بالظهر", "Bending the back"], ["النزول مباشرة نحو الضربة", "Dropping straight into the punch"]],
+    r: ["جولتان: 1-2 ثم انحناء تحت هوك خيالي ثم 3-2.", "2 rounds: 1-2, duck under an imaginary hook, then 3-2."], q: ["bob and weave الملاكمة", "bob and weave boxing tutorial"] },
+  { lv: "i", n: ["التراجع (Pull back)", "Pull back"], d: ["إبعاد الرأس للخلف أو التراجع بخطوة للخروج من المدى ثم الرد.", "Leaning the head back or stepping out of range, then countering."],
+    s: [["ضع الوزن على القدم الخلفية وأبعد الرأس بمقدار بسيط.", "Shift weight onto the rear foot and move the head back slightly."], ["ردّ فورًا بكروس أو جاب.", "Counter immediately with a cross or jab."], ["للمسافات الأطول تراجع بخطوة كاملة.", "For longer distances take a full step back."]],
+    m: [["الميل للخلف مع فقدان التوازن", "Leaning back and losing balance"], ["الاعتماد عليه طوال الوقت", "Relying on it all the time"]],
+    r: ["شادو: 1-2 ثم تراجع ثم 2.", "Shadow: 1-2, pull back, then 2."], q: ["pull back الملاكمة", "boxing pull back counter"] },
+  { lv: "i", n: ["الخروج بالزاوية (Pivot)", "Angle out (pivot)"], d: ["الخروج من خط الهجوم بتدوير القدم لتغيير الزاوية.", "Leaving the attack line by pivoting to change the angle."],
+    s: [["ثبّت القدم الأمامية وحرّك الخلفية بزاوية 45 درجة حولها.", "Plant the lead foot and swing the rear foot about 45 degrees around it."], ["عد للوقفة قبالة الهدف مع الحراسة.", "Settle back into your stance facing the target with your guard up."], ["اضرب من الزاوية الجديدة.", "Punch from the new angle."]],
+    m: [["الدوران مع ترك الوقفة", "Pivoting while abandoning your stance"], ["تقاطع القدمين", "Crossing the feet"]],
+    r: ["على الشوال: 1-2-3 ثم بيفوت ثم 1-2.", "On the bag: 1-2-3, pivot, then 1-2."], q: ["pivot الملاكمة حركة القدمين", "boxing pivot footwork angles"] },
+  { lv: "a", n: ["لفة الكتف (Shoulder roll)", "Shoulder roll"], d: ["دفاع متقدم يستخدم الكتف الأمامي لإبعاد الضربات. يحتاج وقتًا وتدريبًا.", "An advanced defense using the lead shoulder to deflect punches. It takes time and practice."],
+    s: [["ضع جسمك جانبيًا والكتف الأمامي مرتفعًا نحو الذقن.", "Turn side-on with the lead shoulder raised toward the chin."], ["اليد الخلفية تحمي الذقن.", "The rear hand guards the chin."], ["أدر الجذع لتنزلق الضربة على الكتف ثم ردّ.", "Rotate the torso so the punch slides off the shoulder, then counter."]],
+    m: [["تعلمها قبل إتقان الحراسة والانزلاق", "Learning it before mastering guard and slips"], ["إنزال اليد الأمامية بالكامل", "Dropping the lead hand completely"]],
+    r: ["أمام المرآة ببطء جولتين. لا تجربها في سبارينج بدون مدرب.", "Slowly in a mirror for 2 rounds. Do not try it in sparring without a coach."], q: ["shoulder roll الملاكمة", "shoulder roll boxing tutorial"] },
+  { lv: "a", n: ["الكلينش (الاحتضان)", "Clinch"], d: ["عند اقتراب المسافة وفقدان التوازن، اربط ذراعي الخصم لإيقاف الضربات.", "When the distance closes or you lose balance, tie up the opponent's arms to stop punches."],
+    s: [["مرر ذراعيك تحت ذراعي الخصم وأمسك جسمه.", "Slide your arms under the opponent's arms and hold the body."], ["أبقِ رأسك بجانب رأسه وجسمك قريبًا.", "Keep your head beside theirs and your body close."], ["انتظر فصل الحكم أو ادفع للخروج.", "Wait for the referee or push off to exit."]],
+    m: [["الإمساك بوقت طويل بلا داعٍ", "Holding longer than needed"]],
+    r: ["تدرب عليه فقط مع مدرب.", "Practice only with a coach."], q: ["clinch الملاكمة", "boxing clinch technique"] }
+];
+const DEFDRILL = {
+  n: ["تمرين دفاع على الشوال", "Defense drill on the bag"], d: ["ادفع الشوال بيدك ليتأرجح ثم تحرك بعيدًا عن مساره أثناء رجوعه.", "Push the bag so it swings, then move out of its path as it returns."],
+  s: [["ادفع الشوال بخفة بجاب.", "Push the bag lightly with a jab."], ["انزلق أو دُر حول مساره وهو يرجع.", "Slip or pivot around its path as it comes back."], ["اضرب 1-2 بعد الخروج من المسار.", "Throw 1-2 after leaving the path."]],
+  r: ["3 جولات × دقيقتين، ابقَ على بعد ذراع من الشوال.", "3 × 2-minute rounds, staying about an arm's length from the bag."], q: ["تمرين الدفاع على الشوال الملاكمة", "heavy bag defense drills boxing"]
+};
+const COUNTERS = [
+  ["انزلاق من الجاب ← كروس (2)", "Slip the jab → cross (2)"],
+  ["صد الكروس ← هوك أمامي (3)", "Parry the cross → lead hook (3)"],
+  ["بوب تحت الهوك ← كروس للجسم ← هوك", "Duck the hook → cross to the body → hook"],
+  ["بلوك ← هوك أمامي ← كروس (3-2)", "Block → lead hook → cross (3-2)"],
+  ["تراجع ← كروس (2)", "Pull back → cross (2)"]
+];
+
+const TOK = { S: ["انزلاق", "Slip"], R: ["انحناء", "Duck"], P: ["صد", "Parry"], PV: ["بيفوت", "Pivot"], PB: ["تراجع", "Pull"], BL: ["بلوك", "Block"] };
+const COMBO = [
+  { lv: "b", q: ["1"], d: ["الجاب وحده: ركّز على السرعة والرجوع.", "Jab alone: focus on speed and recovery."] },
+  { lv: "b", q: ["1", "1"], d: ["جاب مزدوج: يغيّر الإيقاع.", "Double jab: changes the rhythm."] },
+  { lv: "b", q: ["1", "2"], d: ["الأساس: أول كومبو تتعلمه.", "The foundation: the first combo you learn."] },
+  { lv: "b", q: ["1", "1", "2"], d: ["جاب مزدوج ثم كروس.", "Double jab then cross."] },
+  { lv: "b", q: ["1", "2", "1", "2"], d: ["كرر 1-2 بإيقاع ثابت.", "Repeat 1-2 at a steady tempo."] },
+  { lv: "b", q: ["1", "2", "3"], d: ["الكلاسيكي: من المستقيم إلى الهوك.", "The classic: straights into a hook."] },
+  { lv: "i", q: ["1", "2", "3", "2"], d: ["أشهر كومبو للتحول من هوك إلى كروس.", "Most common combo, finishing the hook with a cross."] },
+  { lv: "i", q: ["1", "2", "5", "2"], d: ["أبركت بعد الكروس من مسافة قريبة.", "Uppercut after the cross at close range."] },
+  { lv: "i", q: ["1", "6", "3", "2"], d: ["أبركت خلفي يفتح الطريق للهوك.", "Rear uppercut opens the way for the hook."] },
+  { lv: "i", q: ["3", "2", "3"], d: ["ابدأ بالهوك الأمامي ثم كروس ثم هوك.", "Start with the lead hook, then cross, then hook."] },
+  { lv: "i", q: ["1", "2", "3b", "3"], d: ["هوك للجسم ثم الرأس: غيّر المستوى.", "Hook to the body then the head: change levels."] },
+  { lv: "i", q: ["1", "2", "3", "6", "3"], d: ["لفة هوك-أبركت-هوك للمسافة القريبة.", "Hook-uppercut-hook loop for close range."] },
+  { lv: "i", q: ["2", "3", "2"], d: ["ابدأ بالكروس لمفاجأة الخصم.", "Lead with the cross to surprise the opponent."] },
+  { lv: "i", q: ["1b", "1", "2"], d: ["جاب للجسم ثم الرأس ثم كروس.", "Jab to the body, jab to the head, then cross."] },
+  { lv: "i", q: ["1", "2b", "3"], d: ["كروس للجسم ثم هوك الرأس.", "Cross to the body then a hook to the head."] },
+  { lv: "a", q: ["1", "2", "S", "2", "3"], d: ["بعد 1-2 انزلق من الرد ثم ضرب كروس وهوك.", "After 1-2, slip the return then cross and hook."] },
+  { lv: "a", q: ["P", "2", "3"], d: ["صد الجاب ثم ردّ كروس وهوك.", "Parry the jab then counter with cross and hook."] },
+  { lv: "a", q: ["S", "2", "3"], d: ["انزلق من الجاب ثم ردّ بكروس وهوك.", "Slip the jab then counter with cross and hook."] },
+  { lv: "a", q: ["1", "2", "R", "3", "2"], d: ["انحنِ تحت الهوك ثم اضرب 3-2.", "Duck the hook then throw 3-2."] },
+  { lv: "a", q: ["PB", "2"], d: ["تراجع ثم ردّ بكروس.", "Pull back then return with a cross."] },
+  { lv: "a", q: ["BL", "3", "2"], d: ["بلوك ثم ردّ فوري بهوك وكروس.", "Block then counter with a hook and cross."] },
+  { lv: "a", q: ["1", "2", "3", "PV", "1", "2"], d: ["اخرج بزاوية بعد الهوك ثم ابدأ من جديد.", "Angle out after the hook then restart."] }
+];
+
+const BAGSET = [
+  ["المسافة: قف بحيث تلمس قبضتك الممدودة الشوال. المسافة الصحيحة تجعل ضرباتك مستقيمة.", "Distance: stand where your extended fist just touches the bag. The right distance keeps punches straight."],
+  ["اضرب بالمفصلين الكبيرين (السبابة والوسطى) والرسغ مستقيم.", "Hit with the two big knuckles (index and middle) with a straight wrist."],
+  ["ازفر مع كل ضربة وارجع اليد بنفس سرعة الخروج.", "Exhale on every punch and return the hand as fast as it went out."],
+  ["لا تقف ثابتًا: تحرك حول الشوال وغيّر الزوايا.", "Do not stand still: move around the bag and change angles."],
+  ["أول أسبوعين بنصف القوة، ثم زد تدريجيًا.", "Half power for the first two weeks, then build gradually."]
+];
+const BAGDRILL = [
+  { n: ["لمس الشوال (Distance touch)", "Distance touch"], d: ["جاب يلمس الشوال ثم خطوة للخلف وللأمام لتقيس المسافة.", "Jab touches the bag, then step in and out to learn your range."], dose: ["جولة 2 د", "1 × 2 min"] },
+  { n: ["الدوران حول الشوال", "Circle the bag"], d: ["جاب وحركة جانبية. دُر في اتجاه واحد جولة كاملة.", "Jab then side-step. Circle one direction for a full round."], dose: ["جولة 2 د × 2", "2 × 2 min"] },
+  { n: ["الجسم ثم الرأس", "Body then head"], d: ["بدّل بين ضربة للجسم وأخرى للرأس مع تغيير مستوى الجسم.", "Alternate body and head shots, changing your level."], dose: ["جولة 2 د × 2", "2 × 2 min"] },
+  { n: ["هرم الكومبو", "Combo pyramid"], d: ["1 ثم 1-2 ثم 1-2-3 ثم 1-2-3-2 ثم ارجع تنازليًا.", "1, then 1-2, 1-2-3, 1-2-3-2, then back down."], dose: ["جولة 3 د", "1 × 3 min"] },
+  { n: ["جولة القوة", "Power round"], d: ["15 ثانية ضربات قوية و15 ثانية خفيفة بالتناوب مع محافظة على التكنيك.", "15 seconds hard, 15 seconds light, keeping technique clean."], dose: ["جولة 3 د", "1 × 3 min"] },
+  { n: ["جولة السرعة", "Speed round"], d: ["20 ثانية ضربات سريعة خفيفة ثم 10 ثواني تحرك فقط.", "20 seconds fast light punches then 10 seconds movement only."], dose: ["جولة 3 د", "1 × 3 min"] }
+];
+const BAGWO = [
+  { n: ["مبتدئ: 6 جولات × دقيقتان", "Beginner: 6 rounds × 2 min"], s: [["ج1: جاب فقط", "R1: jab only"], ["ج2: 1-2", "R2: 1-2"], ["ج3: 1-2-3", "R3: 1-2-3"], ["ج4: حركة + 1-2", "R4: movement + 1-2"], ["ج5: ضربات جسم", "R5: body shots"], ["ج6: حر مع الدفاع", "R6: free with defense"]], r: ["راحة دقيقة بين الجولات.", "1 minute rest between rounds."] },
+  { n: ["متوسط: 8 جولات × 3 دقائق", "Intermediate: 8 rounds × 3 min"], s: [["ج1-2: كومبوهات متوسطة", "R1-2: intermediate combos"], ["ج3: جولة قوة", "R3: power round"], ["ج4: جولة سرعة", "R4: speed round"], ["ج5-6: جسم ثم رأس", "R5-6: body then head"], ["ج7: دفاع وردّ", "R7: defend and counter"], ["ج8: حر", "R8: free"]], r: ["راحة دقيقة.", "1 minute rest."] },
+  { n: ["متقدم: 10 جولات × 3 دقائق", "Advanced: 10 rounds × 3 min"], s: [["ج1-3: كومبوهات بدفاع", "R1-3: combos with defense"], ["ج4-5: قوة وسرعة", "R4-5: power and speed"], ["ج6-8: كومبو روليت", "R6-8: combo roulette"], ["ج9: كل الأدوات بتركيز", "R9: everything, focused"], ["ج10: آخر 30 ثانية بأقصى جهد", "R10: last 30 seconds all-out"]], r: ["راحة دقيقة بين الجولات.", "1 minute rest between rounds."] }
+];
+
+const BANDS = [
+  { n: ["جاب بالأستك", "Band jab"], dose: ["3 × 15 لكل ذراع", "3 × 15 per arm"], d: ["ثبّت الأستك خلفك بمستوى الصدر. اضرب جاب بسرعة وارجع ببطء.", "Anchor behind you at chest height. Punch fast, return slowly."] },
+  { n: ["كروس بالأستك", "Band cross"], dose: ["3 × 12 لكل جانب", "3 × 12 per side"], d: ["اللف من الورك مع مد اليد. حافظ على التوازن.", "Rotate from the hips as you extend. Stay balanced."] },
+  { n: ["هوك بالأستك", "Band hook"], dose: ["3 × 12 لكل جانب", "3 × 12 per side"], d: ["ثبّت الأستك بجانبك وأدر الجذع.", "Anchor beside you and rotate the torso."] },
+  { n: ["أبركت بالأستك", "Band uppercut"], dose: ["3 × 12 لكل جانب", "3 × 12 per side"], d: ["ثبّته منخفضًا واضرب لأعلى من الساقين.", "Anchor low and punch upward from the legs."] },
+  { n: ["شد الأستك للخارج", "Band pull-apart"], dose: ["3 × 15", "3 × 15"], d: ["يقوي الظهر العلوي ويحسن وضع الكتفين.", "Strengthens the upper back and shoulder posture."] },
+  { n: ["Face pull بالأستك", "Band face pull"], dose: ["3 × 15", "3 × 15"], d: ["اسحب نحو الوجه والمرفقان للخارج.", "Pull toward the face with elbows out."] },
+  { n: ["دوران خارجي للكتف", "Band external rotation"], dose: ["3 × 12 لكل ذراع", "3 × 12 per arm"], d: ["حماية الكتف من الإصابة.", "Protects the shoulder from injury."] },
+  { n: ["تجديف بالأستك", "Band row"], dose: ["3 × 12", "3 × 12"], d: ["اسحب نحو الخصر والكتفان للخلف.", "Pull toward the waist with shoulders back."] },
+  { n: ["ضغط صدر بالأستك", "Band chest press"], dose: ["3 × 12", "3 × 12"], d: ["ثبّت الأستك خلفك وادفع للأمام.", "Anchor behind you and press forward."] },
+  { n: ["قطع الخشب بالأستك", "Band wood chop"], dose: ["3 × 12 لكل جانب", "3 × 12 per side"], d: ["قوة دوران الجذع التي تُستخدم في الهوك والكروس.", "Builds the trunk rotation used in hooks and crosses."] },
+  { n: ["مشي جانبي بالأستك", "Band lateral walk"], dose: ["3 × 10 خطوات لكل اتجاه", "3 × 10 steps each way"], d: ["أستك حول الركبتين لتقوية الورك وحركة القدمين.", "Band above the knees to strengthen hips and footwork."] },
+  { n: ["سكوات مع ضغط علوي", "Band squat to press"], dose: ["3 × 12", "3 × 12"], d: ["قدمك على الأستك. انزل ثم ادفع للأعلى.", "Stand on the band, squat, then press overhead."] },
+  { n: ["شادو مع مقاومة", "Resisted shadowboxing"], dose: ["3 × 30 ثانية", "3 × 30 sec"], d: ["الأستك حول ظهرك وفي اليدين. اضرب جاب وكروس بحركة قصيرة.", "Band around your back and in both hands. Short jabs and crosses."] }
+];
+const BANDCIRC = [
+  { n: ["دائرة أ: قوة الضربة", "Circuit A: punch power"], s: [["جاب 3×15 لكل ذراع", "Jab 3×15 each arm"], ["كروس 3×12", "Cross 3×12"], ["هوك 3×12", "Hook 3×12"], ["قطع الخشب 3×12", "Wood chop 3×12"], ["شادو مع مقاومة 3×30 ث", "Resisted shadow 3×30 s"]], r: ["راحة 45 ثانية بين الجولات.", "45 seconds rest between rounds."] },
+  { n: ["دائرة ب: كتف وأرجل", "Circuit B: shoulders and legs"], s: [["شد للخارج 3×15", "Pull-apart 3×15"], ["face pull 3×15", "Face pull 3×15"], ["دوران خارجي 3×12", "External rotation 3×12"], ["مشي جانبي 3×10", "Lateral walk 3×10"], ["سكوات مع ضغط 3×12", "Squat to press 3×12"]], r: ["راحة 45 ثانية.", "45 seconds rest."] }
+];
+
+const FIT = [
+  { n: ["ضغط (Push-ups)", "Push-ups"], dose: ["3 × 10 ثم 25", "3 × 10 up to 25"], d: ["الجسم مستقيم، انزل حتى يقترب الصدر من الأرض.", "Straight body, lower until the chest nears the floor."] },
+  { n: ["سكوات", "Squats"], dose: ["3 × 20", "3 × 20"], d: ["الظهر مستقيم والوزن على الكعبين.", "Straight back, weight through the heels."] },
+  { n: ["سكوات قفز", "Jump squats"], dose: ["3 × 12", "3 × 12"], d: ["اقفز بقوة وانزل بلطف.", "Jump hard, land softly."] },
+  { n: ["بيربي", "Burpees"], dose: ["3 × 8", "3 × 8"], d: ["كل الجسم: انزل، ارمِ القدمين، اضغط، اقفز.", "Full body: drop, kick back, push-up, jump."] },
+  { n: ["متسلق الجبل", "Mountain climbers"], dose: ["3 × 30 ثانية", "3 × 30 sec"], d: ["الجسم مستقيم والركبتان بالتناوب نحو الصدر.", "Straight body, alternate knees toward the chest."] },
+  { n: ["بلانك", "Plank"], dose: ["3 × 30-60 ثانية", "3 × 30-60 sec"], d: ["الجسم خط مستقيم من الرأس للكعبين.", "Straight line from head to heels."] },
+  { n: ["بلانك جانبي", "Side plank"], dose: ["3 × 20 ثانية لكل جانب", "3 × 20 sec per side"], d: ["يقوي عضلات الجذع الجانبية المهمة للدوران.", "Builds the side core muscles that drive rotation."] },
+  { n: ["لف روسي (Russian twist)", "Russian twist"], dose: ["3 × 20", "3 × 20"], d: ["اجلس مائلًا قليلًا وأدر الجذع.", "Lean back slightly and rotate the torso."] },
+  { n: ["رفع الأرجل", "Leg raises"], dose: ["3 × 12", "3 × 12"], d: ["ارفع الساقين مستقيمتين وانزل ببطء.", "Raise straight legs and lower slowly."] },
+  { n: ["كرنش دراجة", "Bicycle crunch"], dose: ["3 × 20", "3 × 20"], d: ["مرفق نحو الركبة المعاكسة بالتناوب.", "Elbow to opposite knee, alternating."] },
+  { n: ["اندفاع (Lunges)", "Lunges"], dose: ["3 × 10 لكل ساق", "3 × 10 per leg"], d: ["الركبة الأمامية فوق القدم.", "Front knee tracks over the foot."] },
+  { n: ["رفع الحوض (Glute bridge)", "Glute bridge"], dose: ["3 × 15", "3 × 15"], d: ["ادفع من الكعبين وشدّ المؤخرة بالأعلى.", "Drive through the heels and squeeze the glutes at the top."] },
+  { n: ["هولو هولد", "Hollow hold"], dose: ["3 × 20 ثانية", "3 × 20 sec"], d: ["الظهر السفلي ملتصق بالأرض والساقان مرفوعتان.", "Lower back pressed down, legs lifted."] },
+  { n: ["الجري (Roadwork)", "Roadwork running"], dose: ["20 إلى 30 دقيقة، مرتين أسبوعيًا", "20 to 30 min, twice a week"], d: ["جري خفيف يبني التحمل. أضف فترات: دقيقة سريعة ودقيقة بطيئة.", "Easy running builds endurance. Add intervals: 1 minute fast, 1 minute easy."] },
+  { n: ["نط الحبل (بدون حبل)", "Skipping (no rope needed)"], dose: ["3 × دقيقة", "3 × 1 min"], d: ["قلّد حركة نط الحبل على مقدمة القدمين لتحسين الإيقاع.", "Mimic jumping rope on the balls of your feet to build rhythm."], q: ["نط الحبل للملاكمة بدون حبل", "boxing skipping without a rope"] }
+];
+const FITCIRC = [
+  { n: ["دائرة الملاكم", "Fighter circuit"], s: [["سكوات", "Squats"], ["ضغط", "Push-ups"], ["متسلق الجبل", "Mountain climbers"], ["بلانك", "Plank"], ["بيربي", "Burpees"]], r: ["5 جولات: 40 ثانية عمل و20 راحة، 3 جولات للمبتدئ.", "5 rounds: 40 seconds work, 20 rest. 3 rounds for beginners."] },
+  { n: ["كور 10 دقائق", "10-minute core"], s: [["بلانك 45 ث", "Plank 45 s"], ["لف روسي 20", "Russian twist 20"], ["رفع الأرجل 12", "Leg raises 12"], ["كرنش دراجة 20", "Bicycle crunch 20"], ["بلانك جانبي 20 ث", "Side plank 20 s each"]], r: ["كرر الدائرة مرتين براحة 30 ثانية.", "Repeat twice with 30 seconds rest."] }
+];
+
+const PLAN = [
+  { n: ["المرحلة 1: الأساسيات (الأسابيع 1-4)", "Phase 1: Foundations (weeks 1-4)"], x: ["3 حصص أسبوعيًا مع يوم راحة بين كل حصة.", "3 sessions per week with a rest day between."],
+    s: [["حصة 1 تكنيك: تسخين 10 د، شادو 4×2 د، شوال 4×2 د (جاب ثم 1-2)، كور 5 د، إطالة 5 د", "Session 1 technique: warm-up 10 min, shadow 4×2 min, bag 4×2 min (jab then 1-2), core 5 min, stretch 5 min"], ["حصة 2 لياقة: تسخين، دائرة أستك 3 جولات، دائرة وزن الجسم 3 جولات، جري خفيف 20 د", "Session 2 fitness: warm-up, band circuit 3 rounds, bodyweight circuit 3 rounds, easy run 20 min"], ["حصة 3 شوال: تسخين، شادو 3×2 د، شوال 5×2 د (1-2-3)، دفاع 10 د، تبريد", "Session 3 bag: warm-up, shadow 3×2 min, bag 5×2 min (1-2-3), defense 10 min, cool-down"], ["اختبار نهاية الأسبوع 4: 3 جولات شادو تصور نفسك فيها، بلانك أطول وقت، ضغط أقصى عدد", "Week 4 test: film 3 shadow rounds, longest plank, max push-ups"]] },
+  { n: ["المرحلة 2: البناء (الأسابيع 5-8)", "Phase 2: Build (weeks 5-8)"], x: ["4 حصص أسبوعيًا.", "4 sessions per week."],
+    s: [["حصة 1 تكنيك ودفاع: شادو 5×2.5 د مع انزلاق وصد، شوال 5×3 د", "Session 1 technique and defense: shadow 5×2.5 min with slips and parries, bag 5×3 min"], ["حصة 2 لياقة: جري 6×(دقيقة سريعة/دقيقة بطيئة)، دائرة أستك ب، كور", "Session 2 fitness: run 6×(1 min fast/1 min easy), band circuit B, core"], ["حصة 3 قوة على الشوال: 6×3 د بكومبوهات متوسطة", "Session 3 bag power: 6×3 min with intermediate combos"], ["حصة 4 مختلطة: كومبو روليت 6 جولات، دائرة أستك أ، دائرة الملاكم", "Session 4 mixed: combo roulette 6 rounds, band circuit A, fighter circuit"], ["اختبار نهاية الأسبوع 8: شوال 6×3 د مصور وراجع تكنيكك", "Week 8 test: film a 6×3 min bag session and review your technique"]] },
+  { n: ["المرحلة 3: الصقل (الأسابيع 9-12)", "Phase 3: Sharpen (weeks 9-12)"], x: ["5 حصص أسبوعيًا، وخفف الحمل لو شعرت بإرهاق.", "5 sessions per week; lighten the load if you feel run down."],
+    s: [["حصة 1: شادو 5×3 د مع دفاع وردّ، شوال 8×3 د", "Session 1: shadow 5×3 min with defense and counters, bag 8×3 min"], ["حصة 2: تايمر 10×(30/30) + جري 30 د", "Session 2: timer 10×(30/30) + 30 min run"], ["حصة 3: شوال 8×3 د وآخر 30 ثانية بأقصى جهد", "Session 3: bag 8×3 min, last 30 seconds all-out"], ["حصة 4: أستك + كور + تكنيك ببطء أمام المرآة", "Session 4: bands + core + slow technique in a mirror"], ["حصة 5 اختبار: شوال 6 جولات مصورة، راجع الفيديو وضع أهدافًا جديدة", "Session 5 test: film a 6-round bag session, review it and set new goals"]] }
+];
+
+const CHECK = [
+  { n: ["المستوى 0: الأمان والمعدات", "Level 0: gear and safety"], i: [["ألف البانداج وحدي بشكل صحيح", "I can wrap my hands correctly on my own"], ["علّقت الشوال بارتفاع مناسب وثابت", "My bag hangs at a good, stable height"], ["أحفظ قواعد الأمان", "I know the safety rules"], ["أسخّن 10 دقائق قبل كل حصة", "I warm up for 10 minutes before every session"]] },
+  { n: ["المستوى 1: الأساسيات", "Level 1: basics"], i: [["أثبت على الوقفة دقيقة كاملة", "I can hold my stance for a full minute"], ["أتحرك في 4 اتجاهات بدون تقاطع القدمين", "I move in 4 directions without crossing my feet"], ["100 جاب نظيف", "100 clean jabs"], ["100 كروس نظيف مع دوران", "100 clean crosses with rotation"], ["3 جولات شادو متواصلة", "3 continuous shadowboxing rounds"]] },
+  { n: ["المستوى 2: باقي الضربات", "Level 2: the rest of the punches"], i: [["الهوك الأمامي بدوران صحيح", "Lead hook with correct rotation"], ["الأبركت بنوعيه", "Both uppercuts"], ["ضربات الجسم مع ثني الركبتين", "Body shots with bent knees"]] },
+  { n: ["المستوى 3: الدفاع", "Level 3: defense"], i: [["الحراسة والصد", "Guard and parry"], ["الانزلاق والانحناء", "Slip and bob and weave"], ["التراجع والبيفوت", "Pull back and pivot"]] },
+  { n: ["المستوى 4: الكومبوز", "Level 4: combos"], i: [["أنفذ 1-2-3-2 بانسيابية", "I throw 1-2-3-2 smoothly"], ["أنفذ 3 كومبوهات متوسطة", "I can throw 3 intermediate combos"], ["أربط دفاعًا بردّ", "I can chain defense into a counter"]] },
+  { n: ["المستوى 5: اللياقة", "Level 5: fitness"], i: [["6 جولات شوال × دقيقتان", "6 bag rounds × 2 minutes"], ["جري 20 دقيقة بدون توقف", "Run 20 minutes without stopping"], ["بلانك 90 ثانية", "90-second plank"], ["25 ضغط", "25 push-ups"]] },
+  { n: ["المستوى 6: الخطوة التالية", "Level 6: next step"], i: [["10 جولات × 3 دقائق", "10 rounds × 3 minutes"], ["راجعت فيديو لنفسي وصححت أخطائي", "I filmed myself and fixed my mistakes"], ["بحثت عن مدرب أو نادٍ للسبارينج الآمن", "I found a coach or gym for safe sparring"]] }
+];
+
+const COOL = [
+  { n: ["إطالة الكتف عبر الصدر", "Cross-body shoulder stretch"], dose: ["30 ثانية لكل ذراع", "30 sec per arm"], d: ["اسحب الذراع عبر صدرك بلطف.", "Gently pull the arm across your chest."] },
+  { n: ["إطالة الترايسبس", "Triceps stretch"], dose: ["30 ثانية لكل ذراع", "30 sec per arm"], d: ["اثنِ المرفق خلف الرأس واضغط بلطف.", "Bend the elbow behind the head and press gently."] },
+  { n: ["إطالة الصدر في الباب", "Doorway chest stretch"], dose: ["30 ثانية", "30 sec"], d: ["الساعد على إطار الباب وتقدم بجسمك.", "Forearm on the door frame, lean through."] },
+  { n: ["إطالة الرسغين", "Wrist flexor and extensor stretch"], dose: ["20 ثانية لكل اتجاه", "20 sec each way"], d: ["اسحب أصابعك لأعلى ثم لأسفل بلطف.", "Gently pull fingers up, then down."] },
+  { n: ["إطالة مرونة الورك", "Hip flexor stretch"], dose: ["30 ثانية لكل جانب", "30 sec per side"], d: ["وضع الاندفاع مع دفع الحوض للأمام.", "Lunge position, push the hips forward."] },
+  { n: ["إطالة الهامسترينج", "Hamstring stretch"], dose: ["30 ثانية لكل ساق", "30 sec per leg"], d: ["ساق مستقيمة وانحنِ من الورك.", "Straight leg, hinge from the hip."] },
+  { n: ["إطالة السمانة", "Calf stretch"], dose: ["30 ثانية لكل ساق", "30 sec per leg"], d: ["الكعب على الأرض ومد الساق خلفك.", "Heel down, leg straight behind."] },
+  { n: ["وضع الطفل", "Child's pose"], dose: ["45 ثانية", "45 sec"], d: ["استرخِ وتنفس بعمق.", "Relax and breathe deeply."] },
+  { n: ["إطالة الرقبة الجانبية", "Neck side stretch"], dose: ["20 ثانية لكل جانب", "20 sec per side"], d: ["اثنِ الرأس جانبًا بلطف دون ضغط قوي.", "Tilt the head sideways gently without forcing."] }
+];
+const HEALTH = [
+  { n: ["الماء والأكل", "Hydration and food"], i: [["اشرب ماء طوال اليوم وليس فقط أثناء التمرين.", "Drink water through the day, not only during training."], ["كل وجبة فيها بروتين وكربوهيدرات بعد التمرين.", "Eat a meal with protein and carbohydrates after training."], ["تجنب التمرين الشاق على معدة ممتلئة جدًا.", "Avoid hard training on a very full stomach."]] },
+  { n: ["النوم والراحة", "Sleep and rest"], i: [["النوم 7 إلى 9 ساعات هو أقوى أداة تعافٍ.", "Seven to nine hours of sleep is your strongest recovery tool."], ["يوم راحة على الأقل بين الحصص الشديدة.", "At least one rest day between hard sessions."], ["كل 6 إلى 8 أسابيع خفف الحمل أسبوعًا.", "Every 6 to 8 weeks take a lighter week."]] },
+  { n: ["وقاية الإصابات", "Preventing injuries"], i: [["لف البانداج جيدًا وحافظ على الرسغ مستقيمًا.", "Wrap well and keep the wrist straight."], ["قوّ الكتف بتمارين الأستك لحمايته.", "Strengthen the shoulder with band work to protect it."], ["زد الحمل تدريجيًا ولا تقفز من 4 جولات لـ 12.", "Build the load gradually; do not jump from 4 rounds to 12."]] },
+  { n: ["متى تستشير طبيبًا", "When to see a doctor"], i: [["ألم مستمر أو تورم في اليد أو الرسغ.", "Persistent pain or swelling in the hand or wrist."], ["تنميل في الأصابع أو الذراع.", "Numbness in the fingers or arm."], ["صداع أو دوخة بعد ضربة على الرأس.", "Headache or dizziness after a blow to the head."]] }
+];
+
+const GLOSS = [
+  ["الجاب", "Jab", "ضربة مستقيمة باليد الأمامية.", "A straight punch with the lead hand."],
+  ["الكروس", "Cross", "ضربة مستقيمة باليد الخلفية.", "A straight punch with the rear hand."],
+  ["هوك", "Hook", "ضربة دائرية قصيرة.", "A short circular punch."],
+  ["أبركت", "Uppercut", "ضربة صاعدة.", "An upward punch."],
+  ["أورثودوكس", "Orthodox", "وقفة القدم اليسرى للأمام.", "Left foot forward stance."],
+  ["ساوثباو", "Southpaw", "وقفة القدم اليمنى للأمام.", "Right foot forward stance."],
+  ["الحراسة", "Guard", "وضع اليدين لحماية الرأس.", "Hand position protecting the head."],
+  ["انزلاق", "Slip", "تحريك الرأس عن خط الضربة.", "Moving the head off the punch line."],
+  ["بوب وويف", "Bob and weave", "النزول تحت الضربة بحركة U.", "Ducking under a punch in a U path."],
+  ["صد", "Parry", "تحريف الضربة بالكف.", "Redirecting a punch with the palm."],
+  ["بيفوت", "Pivot", "الدوران على القدم لتغيير الزاوية.", "Turning on a foot to change angle."],
+  ["شادو بوكسينج", "Shadowboxing", "تدريب ضرب وحركة بدون خصم.", "Practicing punches and movement with no opponent."],
+  ["سبارينج", "Sparring", "تمرين مع شريك بقواعد وحماية.", "Practice fighting with a partner using rules and protection."],
+  ["جولة", "Round", "فترة تمرين محددة، عادة 2 إلى 3 دقائق.", "A set work period, usually 2 to 3 minutes."],
+  ["كومبو", "Combination", "سلسلة ضربات متتالية.", "A chain of punches."],
+  ["كاونتر", "Counter", "ضربة ردّ بعد دفاع.", "A punch thrown right after defending."],
+  ["بانداج", "Hand wraps", "قماش يلف اليد تحت القفاز.", "Cloth wrapped around the hand under the glove."],
+  ["الكلينش", "Clinch", "تثبيت الخصم من قريب.", "Tying up the opponent at close range."],
+  ["روداورك", "Roadwork", "الجري لبناء التحمل.", "Running to build endurance."],
+  ["جولة قوة", "Power round", "جولة ضربات قوية.", "A round of hard punches."]
+];
+
+/* ---------- keys for "my session" and search ---------- */
+const KEYS = {};
+function keyed(arr, p) { arr.forEach((x, i) => { x.k = p + i; KEYS[x.k] = x; }); }
+keyed(PUNCH, "p"); keyed(DEF, "d"); keyed(WARM, "w"); keyed(BANDS, "b"); keyed(FIT, "f"); keyed(COOL, "c");
+keyed(BAGDRILL, "g"); keyed(FOOT, "t"); keyed([DEFDRILL], "x"); keyed(BAGWO, "o"); keyed(BANDCIRC, "m"); keyed(FITCIRC, "n");
+
+/* ---------- renderers ---------- */
+function addBtn(it) {
+  return it.k ? '<button class="addbtn" type="button" data-act="add" data-k="' + it.k + '" aria-pressed="false" aria-label="' + T(["أضف إلى جلستي", "Add to my session"]) + '">+</button>' : "";
+}
+function exAttrs(it) {
+  if (!it.k) return "";
+  const sx = (it.n[0] + " " + it.n[1] + " " + (it.d ? it.d[0] + " " + it.d[1] : "")).toLowerCase().replace(/"/g, "");
+  return ' data-ex data-s="' + sx + '"';
+}
+function vids(it, suf) {
+  const q = it.q || [T0(it.n) + " " + suf[0], it.n[1] + " " + suf[1]];
+  return '<div class="vid"><a href="' + yt(q[0]) + '" target="_blank" rel="noopener">' + PLAY + T(UI.vidAr) + '</a><a href="' + yt(q[1]) + '" target="_blank" rel="noopener">' + PLAY + T(UI.vidEn) + "</a></div>";
+}
+function T0(a) { return a[0]; }
+function chip(tok) {
+  const m = /^([1-6])(b?)$/.exec(tok);
+  if (m) {
+    const hand = (+m[1]) % 2 ? "l" : "r";
+    return '<span class="chip ' + hand + '">' + m[1] + (m[2] ? "<small>" + (L ? "BODY" : "جسم") + "</small>" : "") + "</span>";
+  }
+  const m2 = /^([1-6])b$/.exec(tok);
+  return '<span class="chip n">' + T(TOK[tok] || [tok, tok]) + "</span>";
+}
+function card(it, suf, o) {
+  o = o || {};
+  const num = it.num ? '<span class="chip ' + it.hand + '">' + it.num + "</span>" : (it.num === 0 ? '<span class="chip n">' + (L ? "BODY" : "جسم") + "</span>" : "");
+  return '<article class="card' + (o.wide ? " wide" : "") + '"' + exAttrs(it) + (it.num ? ' data-n="' + it.num + '" data-h="' + it.hand + '"' : "") + '><header class="ch">' + num + "<h3>" + T(it.n) + "</h3>" + (it.lv ? '<span class="tag">' + T(LV[it.lv]) + "</span>" : "") + addBtn(it) + "</header>" +
+    (it.dose ? '<span class="dose">' + T(it.dose) + "</span>" : "") +
+    (it.d ? '<p class="d">' + T(it.d) + "</p>" : "") +
+    (it.s ? "<div><h4>" + T(UI.steps) + "</h4><ol>" + li(it.s) + "</ol></div>" : "") +
+    (it.m ? "<div><h4>" + T(UI.mist) + "</h4><ul>" + li(it.m) + "</ul></div>" : "") +
+    (it.r ? '<p class="drill"><strong>' + T(UI.drill) + ":</strong> " + T(it.r) + "</p>" : "") +
+    (suf ? vids(it, suf) : "") + "</article>";
+}
+function listCard(it, o) {
+  return '<article class="card"' + exAttrs(it) + '><header class="ch"><h3>' + T(it.n) + "</h3>" + addBtn(it) + "</header>" + (it.d ? '<p class="d">' + T(it.d) + "</p>" : "") +
+    '<ol>' + li(it.s) + "</ol>" + (it.r ? '<p class="drill">' + T(it.r) + "</p>" : "") + "</article>";
+}
+function sec(id, title, lead, body) {
+  return '<section id="' + id + '"><div class="sh"><h2>' + T(title) + "</h2>" + (lead ? "<p>" + T(lead) + "</p>" : "") + "</div>" + body + "</section>";
+}
+const grid = (arr, f, cls) => '<div class="grid' + (cls ? " " + cls : "") + '">' + arr.map(f).join("") + "</div>";
+
+function stanceSvg() {
+  return '<svg class="feet" viewBox="0 0 340 250" role="img" aria-label="' + T(["رسم علوي لوضع القدمين", "Top-down view of foot position"]) + '">' +
+    '<line x1="170" y1="26" x2="170" y2="206" stroke="var(--line)" stroke-width="2" stroke-dasharray="6 6"/>' +
+    '<path d="M170 6l-9 15h18z" fill="var(--muted)"/>' +
+    '<text x="215" y="18">' + T(["الهدف", "Target"]) + "</text>" +
+    '<g transform="translate(130 80) rotate(8)"><ellipse rx="19" ry="42" fill="var(--blue)"/></g>' +
+    '<g transform="translate(212 168) rotate(42)"><ellipse rx="19" ry="42" fill="var(--red)"/></g>' +
+    '<text x="55" y="76">' + T(["القدم الأمامية", "Lead foot"]) + "</text>" +
+    '<text x="55" y="92">' + T(["تشير للأمام", "points forward"]) + "</text>" +
+    '<text x="294" y="160">' + T(["القدم الخلفية", "Rear foot"]) + "</text>" +
+    '<text x="294" y="176">' + T(["الكعب مرفوع", "heel raised"]) + "</text>" +
+    '<path d="M130 224v8h82v-8" fill="none" stroke="var(--muted)" stroke-width="2"/>' +
+    '<text x="170" y="246">' + T(["أوسع قليلًا من الكتفين", "a little wider than the shoulders"]) + "</text></svg>";
+}
+
+function renderHero() {
+  const names = [[1, "l", ["جاب", "Jab"]], [2, "r", ["كروس", "Cross"]], [3, "l", ["هوك أمامي", "Lead hook"]], [4, "r", ["هوك خلفي", "Rear hook"]], [5, "l", ["أبركت أمامي", "Lead uppercut"]], [6, "r", ["أبركت خلفي", "Rear uppercut"]]];
+  document.getElementById("heroIn").innerHTML =
+    "<h1>" + T(["بوكسينج من الصفر", "Boxing from zero"]) + "</h1>" +
+    '<p class="sub">' + T(["شوال وقفازات وبانداج وأستك مقاومة. من أول لفة بانداج حتى كومبوز كاملة على الشوال، مع فيديو شرح لكل تمرين.", "A heavy bag, gloves, wraps and resistance bands. From your first wrap to full combinations on the bag, with a video guide for every exercise."]) + "</p>" +
+    '<div class="punchrow">' + names.map((n, i) => '<span class="pk" style="--i:' + i + '"><span class="chip ' + n[1] + '">' + n[0] + "</span>" + T(n[2]) + "</span>").join("") + "</div>" +
+    '<div class="legend"><span><i style="background:var(--deck-blue)"></i>' + T(["الأزرق: اليد الأمامية", "Blue: lead hand"]) + '</span><span><i style="background:var(--deck-red)"></i>' + T(["الأحمر: اليد الخلفية", "Red: rear hand"]) + "</span></div>" +
+    '<div class="stats">' + [["تمرين", "Exercises"], ["كومبو", "Combos"], ["فيديو شرح", "Video guides"], ["أسبوع خطة", "Plan weeks"]].map(s => '<div class="stat"><b>0</b><span>' + T(s) + "</span></div>").join("") + "</div>" +
+    '<div class="herobtns"><a class="btn p" href="#start">' + T(["ابدأ من الصفر", "Start from zero"]) + '</a><a class="btn" href="#timer">' + T(["شغّل التايمر", "Open the timer"]) + "</a></div>" +
+    '<div class="ropes" aria-hidden="true"><i></i><i></i><i></i></div>';
+}
+function renderNav() {
+  document.getElementById("navIn").innerHTML =
+    '<button class="langbtn" type="button" data-act="lang">' + T(UI.lang) + '</button><button class="iconbtn" type="button" data-act="theme" aria-label="' + T(["تغيير المظهر", "Change theme"]) + '">' + ICON[THEME] + "</button>" +
+    '<div class="chips">' + SEC.map(s => '<a href="#' + s[0] + '">' + T(s[1]) + "</a>").join("") + "</div>";
+}
+
+function comboPool() { return S.lv === "all" ? COMBO : COMBO.filter(c => c.lv === S.lv); }
+function comboHtml(c) {
+  return '<article class="card combo"><div class="seq">' + c.q.map(chip).join("") + '</div><p class="d">' + T(c.d) + '</p><span class="tag" style="align-self:flex-start">' + T(LV[c.lv]) + "</span></article>";
+}
+function renderCombosList() { const el = document.getElementById("comboList"); if (el) el.innerHTML = comboPool().map(comboHtml).join(""); }
+function renderRoulette() {
+  const el = document.getElementById("rouletteOut"); if (!el) return;
+  const c = S.cur;
+  el.innerHTML = '<div class="seq">' + c.q.map(chip).join("") + "</div><p>" + T(c.d) + "</p>";
+  el.querySelectorAll(".chip").forEach((x, i) => x.style.setProperty("--i", i));
+}
+function nextCombo() { const p = comboPool(); S.cur = p[Math.floor(Math.random() * p.length)]; renderRoulette(); }
+const S = { lv: "all", cur: COMBO[2] };
+
+function renderApp() {
+  const SUF_P = ["شرح بوكسينج", "boxing tutorial"], SUF_D = ["دفاع بوكسينج شرح", "boxing defense tutorial"];
+  const parts = [];
+
+  parts.push(sec("start", ["ابدأ من هنا", "Start here"], ["معداتك جاهزة: شوال وقفازات وبانداج وأستك. هذه الصفحة تأخذك خطوة بخطوة، وكل تمرين عليه زرّان لفتح فيديو شرح على يوتيوب بالعربي وبالإنجليزي في تبويب جديد.", "Your gear is ready: bag, gloves, wraps and bands. This page walks you through step by step, and every exercise has two buttons that open YouTube tutorials in Arabic and English in a new tab."],
+    '<h3 class="sub2" style="margin-top:0">' + T(["معداتك", "Your gear"]) + "</h3>" + grid(GEAR, g => '<article class="card"><header class="ch"><h3>' + T(g.n) + '</h3></header><p class="d">' + T(g.d) + "</p>" + vids(g, ["", ""]) + "</article>") +
+    '<h3 class="sub2">' + T(["قواعد الأمان", "Safety rules"]) + '</h3><div class="card"><ul class="rules">' + li(SAFE) + "</ul></div>" +
+    '<h3 class="sub2">' + T(["مسار التعلم", "Learning path"]) + '</h3><ol class="path">' + PATH.map(p => '<li><a href="#' + p[0] + '">' + T(p[1]) + "</a></li>").join("") + "</ol>" +
+    '<p class="note" style="margin-top:1.4rem">' + T(["هذا المحتوى للتعليم العام وليس بديلًا عن مدرب أو طبيب. تعلّم الدفاع والسبارينج مع مدرب إن أمكن.", "This content is general education and no substitute for a coach or doctor. Learn defense and sparring with a coach if you can."]) + "</p>"));
+
+  parts.push(sec("wraps", ["لف البانداج", "Hand wraps"], ["أول مهارة تتعلمها وآخر ما تتخلى عنه. لفّة صحيحة تحمي رسغك ومفاصل أصابعك.", "The first skill you learn and the last you drop. A good wrap protects your wrist and knuckles."],
+    '<div class="grid">' + card(WRAP, ["بانداج", "wraps"], { wide: true }) + "</div>"));
+
+  parts.push(sec("stance", ["الوقفة والحركة", "Stance and footwork"], ["كل ضربة ودفاع يبدأ من وقفة متوازنة. أتقنها قبل أي شيء.", "Every punch and defense starts from a balanced stance. Master it first."],
+    '<div class="two"><div class="grid" style="grid-template-columns:1fr">' + card(STANCE, ["وقفة", "stance"]) + '</div><div class="card">' + stanceSvg() + '<p class="d">' + T(["الرسم لوقفة أورثودوكس. اعكسه لو كنت أعسر.", "Drawn for an orthodox stance. Mirror it if you are left-handed."]) + "</p></div></div>" +
+    '<h3 class="sub2">' + T(["حركة القدمين", "Footwork"]) + "</h3>" + grid(FOOT, f => card(f, ["حركة القدمين ملاكمة " , "boxing footwork "]))));
+
+  parts.push(sec("warmup", ["التسخين", "Warm-up"], ["8 إلى 10 دقائق قبل كل حصة. اتبع الترتيب من الأعلى للأسفل.", "8 to 10 minutes before every session. Follow the order from top to bottom."],
+    grid(WARM, w => card(w, ["تمرين تسخين", "warm up exercise"]), "sm")));
+
+  parts.push(sec("punches", ["الضربات", "Punches"], ["الأرقام هي لغة المدربين: 1 جاب، 2 كروس، 3 هوك أمامي، 4 هوك خلفي، 5 أبركت أمامي، 6 أبركت خلفي. الأزرق باليد الأمامية والأحمر بالخلفية.", "Numbers are the trainers' language: 1 jab, 2 cross, 3 lead hook, 4 rear hook, 5 lead uppercut, 6 rear uppercut. Blue is the lead hand, red the rear."],
+    grid(PUNCH, p => card(p, SUF_P))));
+
+  parts.push(sec("defense", ["الدفاع", "Defense"], ["الدفاع يبدأ بالحراسة ثم الحركة. تعلّم دفاعًا واحدًا وأتبعه بضربة ردّ.", "Defense starts with guard, then movement. Learn one defense and follow it with a counter."],
+    grid(DEF, d => card(d, SUF_D)) +
+    '<h3 class="sub2">' + T(["تمرين دفاع منفرد", "A solo defense drill"]) + '</h3><div class="grid">' + card(DEFDRILL, ["دفاع الشوال", "bag defense"]) + "</div>" +
+    '<h3 class="sub2">' + T(["أمثلة على الدفاع والردّ", "Defend-and-counter examples"]) + '</h3><div class="card"><ul>' + li(COUNTERS) + "</ul></div>"));
+
+  parts.push(sec("combos", ["الكومبوز", "Combos"], ["اربط الضربات بالأرقام. الحروف: جسم = ضربة للجسم، انزلاق وصد وانحناء وتراجع وبيفوت وبلوك = حركات دفاعية.", "Chain punches by number. Chips marked body go to the body; slip, parry, duck, pull, pivot and block are defensive moves."],
+    '<div class="tabs" role="group">' + [["all", ["الكل", "All"]], ["b", LV.b], ["i", LV.i], ["a", LV.a]].map(t => '<button class="btn" type="button" data-act="lv" data-lv="' + t[0] + '" aria-pressed="' + (S.lv === t[0]) + '">' + T(t[1]) + "</button>").join("") + "</div>" +
+    '<div class="roul"><h3>' + T(["روليت الكومبو", "Combo roulette"]) + '</h3><div id="rouletteOut"></div><button class="btn" type="button" data-act="next">' + T(["كومبو جديد", "Next combo"]) + "</button></div>" +
+    '<div class="grid" id="comboList"></div>' +
+    '<div class="grid" style="margin-top:1rem"><div class="card">' + vids({ n: ["كومبوهات", "Combos"], q: ["كومبوهات ملاكمة للمبتدئين", "boxing combinations for beginners"] }, ["", ""]) + "</div></div>"));
+
+  parts.push(sec("bag", ["الشوال", "Heavy bag"], ["هنا تجمع كل شيء. ابدأ بجولات قصيرة وزد تدريجيًا.", "This is where everything comes together. Start with short rounds and build up."],
+    '<div class="card"><ul>' + li(BAGSET) + "</ul>" + vids({ n: ["الشوال", "bag"], q: ["التمرين على شوال الملاكمة للمبتدئين", "heavy bag workout for beginners"] }, ["", ""]) + "</div>" +
+    '<h3 class="sub2">' + T(["تمارين الشوال", "Bag drills"]) + "</h3>" + grid(BAGDRILL, b => card(b, ["تمرين الشوال", "heavy bag drill"]), "sm") +
+    '<h3 class="sub2">' + T(["حصص جاهزة", "Ready-made workouts"]) + "</h3>" + grid(BAGWO, listCard)));
+
+  parts.push(sec("bands", ["أستك المقاومة", "Resistance bands"], ["قوة الدوران وسرعة الضربة وحماية الكتف. ثبّت الأستك جيدًا قبل البدء.", "Rotation power, punch speed and shoulder protection. Anchor the band firmly first."],
+    grid(BANDS, b => card(b, ["تمرين الأستك", "resistance band"]), "sm") + '<h3 class="sub2">' + T(["دوائر جاهزة", "Ready-made circuits"]) + "</h3>" + grid(BANDCIRC, listCard)));
+
+  parts.push(sec("fitness", ["اللياقة والكور", "Fitness and core"], ["التحمل والكور أساس الأداء في الجولات الأخيرة. لا تحتاج أدوات إضافية.", "Endurance and core carry you through the last rounds. No extra gear needed."],
+    grid(FIT, f => card(f, ["تمرين", "exercise"]), "sm") + '<h3 class="sub2">' + T(["دوائر جاهزة", "Ready-made circuits"]) + "</h3>" + grid(FITCIRC, listCard)));
+
+  parts.push(sec("plan", ["خطة 12 أسبوعًا", "12-week plan"], ["ثلاث مراحل. في كل مرحلة تزيد الحصص أو الجولات تدريجيًا. اجعل الراحة جزءًا من الخطة.", "Three phases. Each adds sessions or rounds gradually. Treat rest as part of the plan."],
+    grid(PLAN, p => '<article class="card"><header class="ch"><h3>' + T(p.n) + '</h3></header><p class="d">' + T(p.x) + "</p><ol>" + li(p.s) + "</ol></article>")));
+
+  parts.push(sec("timer", ["تايمر الجولات", "Round timer"], ["اضبط الجولات والراحة أو اختر نمطًا جاهزًا. سيصدر صوت في بداية كل جولة وتنبيه قبل نهايتها بـ 10 ثوانٍ.", "Set rounds and rest or pick a preset. A bell sounds when each round starts, with a warning 10 seconds before it ends."],
+    '<div class="tbox" id="tBox"><div class="ringwrap"><svg viewBox="0 0 260 260" aria-hidden="true"><circle class="rt" cx="130" cy="130" r="118" fill="none" stroke-width="10"/><circle id="tRing" cx="130" cy="130" r="118" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-dasharray="741.4" stroke-dashoffset="0" transform="rotate(-90 130 130)"/></svg><div class="rin"><div class="ph" id="tPh"></div><div class="tm" id="tTm">3:00</div><div class="rd" id="tRd"></div></div></div><div class="seq call" id="tCall"></div><div class="tctl"><button class="btn" type="button" data-act="tgo" id="tGo"></button><button class="btn" type="button" data-act="tskip">' + T(["تخطي", "Skip"]) + '</button><button class="btn" type="button" data-act="treset">' + T(["إعادة", "Reset"]) + "</button></div></div>" +
+    '<div class="tcfg"><label class="f">' + T(["الجولات", "Rounds"]) + '<input type="number" inputmode="numeric" id="cR" min="1" max="30"></label><label class="f">' + T(["العمل (ثانية)", "Work (sec)"]) + '<input type="number" inputmode="numeric" id="cW" min="10" max="900"></label><label class="f">' + T(["الراحة (ثانية)", "Rest (sec)"]) + '<input type="number" inputmode="numeric" id="cT" min="5" max="300"></label></div>' +
+    '<div class="presets">' + PRESETS.map((p, i) => '<button class="btn" type="button" data-act="preset" data-i="' + i + '">' + T(p.n) + "</button>").join("") + "</div>" +
+    '<p id="tTot"></p>' +
+    '<div class="card" style="margin-top:1rem"><header class="ch"><h3>' + T(["منادي الكومبوز", "Combo caller"]) + '</h3></header><p class="d">' + T(["يعرض كومبو جديد كل عدة ثوانٍ أثناء الجولة، وينطقه بصوت لو فعّلت الصوت. تحتاج ضغط ابدأ أولًا.", "Shows a new combo every few seconds during a round and says it aloud if voice is on. Press Start first."]) + '</p><div class="tcfg"><label class="f">' + T(["المستوى", "Level"]) + '<select id="cLv"><option value="all">' + T(["الكل", "All"]) + '</option><option value="b">' + T(LV.b) + '</option><option value="i">' + T(LV.i) + '</option><option value="a">' + T(LV.a) + '</option></select></label><label class="f">' + T(["كل (ثانية)", "Every (sec)"]) + '<input type="number" inputmode="numeric" id="cEvery" min="4" max="20"></label><div style="display:flex;flex-direction:column;gap:.5rem;justify-content:flex-end"><label class="sw"><input type="checkbox" id="cCall">' + T(["تشغيل المنادي", "Enable caller"]) + '</label><label class="sw"><input type="checkbox" id="cVoice">' + T(["نطق صوتي", "Voice"]) + "</label></div></div></div>"));
+
+  parts.push(sec("tools", ["السجل والأدوات", "Log and tools"], ["سجّل تمارينك لتبني سلسلة أيام متتالية، واحسب مناطق نبض القلب لتضبط شدة الجولات.", "Log your sessions to build a streak, and work out your heart-rate zones to set round intensity."],
+    '<div class="two"><div class="card" id="logBox"></div><div class="card"><header class="ch"><h3>' + T(["مناطق نبض القلب", "Heart-rate zones"]) + '</h3></header><label class="f">' + T(["عمرك", "Your age"]) + '<input type="number" inputmode="numeric" id="cAge" min="10" max="90" value="' + HR_AGE + '"></label><div id="hrOut"></div><p class="d" style="font-size:.85rem">' + T(["تقدير تقريبي بمعادلة 220 ناقص العمر. لو عندك مشكلة في القلب أو تتناول أدوية، استشر طبيبك أولًا.", "A rough estimate using 220 minus age. If you have a heart condition or take medication, check with your doctor first."]) + "</p></div></div>"));
+
+  parts.push(sec("check", ["التشيك: قياس تقدمك", "Skill check: measure your progress"], ["علّم ما أتقنته فعلًا. تُحفظ علاماتك في هذا المتصفح فقط.", "Tick what you have truly mastered. Your marks are saved in this browser only."],
+    '<div class="card" style="margin-bottom:1rem"><div class="lvh"><strong>' + T(["التقدم الكلي", "Overall progress"]) + '</strong><span id="pAll"></span></div><div class="bar"><i id="pBar"></i></div></div>' +
+    '<div class="grid chk">' + CHECK.map((g, gi) => '<article class="card"><div class="lvh"><strong>' + T(g.n) + '</strong><span id="pg' + gi + '"></span></div><ul>' + g.i.map((x, xi) => '<li><label><input type="checkbox" data-id="c' + gi + "_" + xi + '"><span>' + T(x) + "</span></label></li>").join("") + "</ul></article>").join("") + "</div>" +
+    '<p style="margin-top:1rem"><button class="btn" type="button" data-act="clear">' + T(["مسح العلامات", "Clear all marks"]) + "</button></p>"));
+
+  parts.push(sec("recovery", ["التبريد والتعافي", "Cool-down and recovery"], ["5 إلى 10 دقائق إطالة بعد الحصة، ثم عناية بالنوم والأكل.", "5 to 10 minutes of stretching after the session, then look after sleep and food."],
+    grid(COOL, c => card(c, ["إطالة", "stretch"]), "sm") + '<h3 class="sub2">' + T(["عادات التعافي والصحة", "Recovery and health habits"]) + "</h3>" +
+    grid(HEALTH, h => '<article class="card"><header class="ch"><h3>' + T(h.n) + '</h3></header><ul>' + li(h.i) + "</ul></article>")));
+
+  parts.push(sec("glossary", ["قاموس المصطلحات", "Glossary"], null,
+    '<div class="card scroll"><table><thead><tr><th>' + T(["المصطلح", "Term"]) + "</th><th>" + T(["المعنى", "Meaning"]) + "</th></tr></thead><tbody>" +
+    GLOSS.map(g => "<tr><td><strong>" + T([g[0] + " (" + g[1] + ")", g[1] + " (" + g[0] + ")"]) + "</strong></td><td>" + T([g[2], g[3]]) + "</td></tr>").join("") + "</tbody></table></div>"));
+
+  document.getElementById("app").innerHTML = parts.join("");
+  document.getElementById("foot").innerHTML = "<p>" + T(["المحتوى للتعليم العام وليس نصيحة طبية. استشر طبيبك أو مدربًا قبل التمرين الشاق أو السبارينج.", "General education, not medical advice. Check with your doctor or a coach before hard training or sparring."]) + "</p>" +
+    '<div class="df"><button class="btn" type="button" data-act="export">' + T(["تصدير البيانات (JSON)", "Export data (JSON)"]) + '</button><button class="btn" type="button" data-act="import">' + T(["استيراد البيانات (JSON)", "Import data (JSON)"]) + '</button><input id="impFile" type="file" accept=".json,application/json" hidden></div>';
+}
+
+/* ---------- timer ---------- */
+const PRESETS = [
+  { n: ["مبتدئ 4×2", "Beginner 4×2"], r: 4, w: 120, t: 60 }, { n: ["قياسي 6×3", "Standard 6×3"], r: 6, w: 180, t: 60 },
+  { n: ["ملاكم 12×3", "Fighter 12×3"], r: 12, w: 180, t: 60 }, { n: ["لياقة 10×30/30", "Conditioning 10×30/30"], r: 10, w: 30, t: 30 }
+];
+const TS = { cfg: { rounds: 6, work: 180, rest: 60, prep: 10 }, phase: "idle", round: 1, left: 180000, running: false, endAt: 0, iv: null, w10: false, callOn: false, voice: true, callLv: "b", every: 8, nextCall: 0, call: null };
+let ac = null, wl = null;
+function initAudio() { try { if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === "suspended") ac.resume(); } catch (e) {} }
+function beep(f, d, when, vol) {
+  if (!ac) return;
+  try { const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + (when || 0); o.type = "sine"; o.frequency.value = f; g.gain.setValueAtTime(vol || 0.25, t); g.gain.exponentialRampToValueAtTime(0.001, t + d); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + d); } catch (e) {}
+}
+function bell() { beep(880, 1.1, 0, 0.3); beep(1320, 0.8, 0, 0.12); beep(880, 1.1, 0.6, 0.3); }
+function wake(on) { try { if (on) { navigator.wakeLock && navigator.wakeLock.request("screen").then(l => { wl = l; }).catch(() => {}); } else if (wl) { wl.release(); wl = null; } } catch (e) {} }
+const fmt = ms => { const s = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+function drawTimer() {
+  const b = document.getElementById("tBox"); if (!b) return;
+  const p = TS.phase;
+  b.className = "tbox" + (p === "work" ? " work" : p === "rest" ? " rest" : "");
+  const names = { idle: ["جاهز", "Ready"], ready: ["استعد", "Get ready"], work: ["اضرب", "Work"], rest: ["راحة", "Rest"], done: ["انتهى التمرين", "Done"] };
+  document.getElementById("tPh").textContent = T(names[p]);
+  document.getElementById("tTm").textContent = fmt(p === "idle" ? TS.cfg.work * 1000 : TS.left);
+  document.getElementById("tRd").textContent = (p === "idle" || p === "ready" || p === "done") ? "" : T(["الجولة ", "Round "]) + TS.round + " / " + TS.cfg.rounds;
+  const tot = p === "work" ? TS.cfg.work * 1000 : p === "rest" ? TS.cfg.rest * 1000 : p === "ready" ? TS.cfg.prep * 1000 : 1;
+  const prog = p === "idle" ? 1 : p === "done" ? 0 : Math.max(0, Math.min(1, TS.left / tot));
+  document.getElementById("tRing").style.strokeDashoffset = String(741.4 * (1 - prog));
+  b.classList.toggle("hot", p === "work" && TS.running && TS.left <= 10000 && TS.cfg.work > 20);
+  const secs = TS.cfg.rounds * TS.cfg.work + (TS.cfg.rounds - 1) * TS.cfg.rest;
+  document.getElementById("tTot").textContent = T(["مدة التمرين الكلية: ", "Total workout time: "]) + Math.round(secs / 6) / 10 + T([" دقيقة", " min"]);
+  drawCall();
+  document.getElementById("tGo").textContent = TS.running ? T(["إيقاف مؤقت", "Pause"]) : (p === "idle" || p === "done" ? T(["ابدأ", "Start"]) : T(["تابع", "Resume"]));
+  const r = document.getElementById("cR"), w = document.getElementById("cW"), t = document.getElementById("cT");
+  if (r && document.activeElement !== r) r.value = TS.cfg.rounds;
+  if (w && document.activeElement !== w) w.value = TS.cfg.work;
+  if (t && document.activeElement !== t) t.value = TS.cfg.rest;
+  const cc = document.getElementById("cCall"), cv = document.getElementById("cVoice"), cl = document.getElementById("cLv"), ce = document.getElementById("cEvery");
+  if (cc) cc.checked = TS.callOn;
+  if (cv) cv.checked = TS.voice;
+  if (cl) cl.value = TS.callLv;
+  if (ce && document.activeElement !== ce) ce.value = TS.every;
+}
+function setPhase(ph, ms) {
+  TS.phase = ph; TS.left = ms; TS.endAt = Date.now() + ms; TS.w10 = false;
+  if (ph === "work") TS.nextCall = Date.now() + 1500; else TS.call = null;
+}
+const NUMW = [["", "واحد", "اتنين", "تلاتة", "أربعة", "خمسة", "ستة"], ["", "one", "two", "three", "four", "five", "six"]];
+function speakCombo(c) {
+  if (!TS.voice) return;
+  try {
+    if (!window.speechSynthesis) return;
+    const words = c.q.map(t => { const m = /^([1-6])(b?)$/.exec(t); return m ? NUMW[L][m[1]] + (m[2] ? (L ? " body" : " جسم") : "") : T(TOK[t] || [t, t]); });
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(words.join(L ? ", " : "، "));
+    u.lang = L ? "en-US" : "ar-EG"; u.rate = 1.1;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function callCombo() {
+  const p = TS.callLv === "all" ? COMBO : COMBO.filter(c => c.lv === TS.callLv);
+  TS.call = p[Math.floor(Math.random() * p.length)];
+  drawCall(); speakCombo(TS.call);
+}
+function drawCall() {
+  const el = document.getElementById("tCall"); if (!el) return;
+  const want = TS.call && TS.phase === "work" && TS.callOn ? TS.call : null;
+  if (el.dataset.cur === (want ? want.q.join("-") + TS.round : "")) return;
+  el.dataset.cur = want ? want.q.join("-") + TS.round : "";
+  el.innerHTML = want ? want.q.map(chip).join("") : "";
+  el.querySelectorAll(".chip").forEach((x, i) => x.style.setProperty("--i", i));
+}
+function nextPhase() {
+  if (TS.phase === "ready") { setPhase("work", TS.cfg.work * 1000); bell(); }
+  else if (TS.phase === "work") {
+    if (TS.round >= TS.cfg.rounds) { setPhase("done", 0); TS.running = false; clearInterval(TS.iv); TS.iv = null; wake(false); bell(); }
+    else { setPhase("rest", TS.cfg.rest * 1000); beep(660, 0.6, 0, 0.25); }
+  } else if (TS.phase === "rest") { TS.round++; setPhase("work", TS.cfg.work * 1000); bell(); }
+}
+function tick() {
+  if (!TS.running) return;
+  const l = TS.endAt - Date.now();
+  if (l <= 0) nextPhase(); else {
+    TS.left = l;
+    if (TS.callOn && TS.phase === "work" && Date.now() >= TS.nextCall && l > 3000) { callCombo(); TS.nextCall = Date.now() + TS.every * 1000; }
+    if (TS.phase === "work" && !TS.w10 && l <= 10000 && TS.cfg.work > 20) { TS.w10 = true; beep(1000, 0.25, 0, 0.25); beep(1000, 0.25, 0.35, 0.25); }
+  }
+  drawTimer();
+}
+function toggleTimer() {
+  initAudio();
+  if (TS.running) { TS.left = Math.max(0, TS.endAt - Date.now()); TS.running = false; drawTimer(); return; }
+  if (TS.phase === "idle" || TS.phase === "done") { TS.round = 1; setPhase("ready", TS.cfg.prep * 1000); }
+  else TS.endAt = Date.now() + TS.left;
+  TS.running = true; wake(true);
+  if (!TS.iv) TS.iv = setInterval(tick, 200);
+  drawTimer();
+}
+function resetTimer() { TS.running = false; clearInterval(TS.iv); TS.iv = null; wake(false); TS.phase = "idle"; TS.round = 1; TS.left = TS.cfg.work * 1000; drawTimer(); }
+function skipTimer() { if (TS.phase === "idle" || TS.phase === "done") return; initAudio(); nextPhase(); TS.endAt = Date.now() + TS.left; drawTimer(); }
+
+/* ---------- checklist ---------- */
+function applyChecks() {
+  let tot = 0, ok = 0;
+  CHECK.forEach((g, gi) => {
+    let n = 0, d = 0;
+    g.i.forEach((x, xi) => { const id = "c" + gi + "_" + xi, el = document.querySelector('[data-id="' + id + '"]'); n++; if (el) el.checked = !!DONE[id]; if (DONE[id]) d++; });
+    const s = document.getElementById("pg" + gi); if (s) s.textContent = d + " / " + n;
+    tot += n; ok += d;
+  });
+  const a = document.getElementById("pAll"), b = document.getElementById("pBar");
+  if (a) a.textContent = ok + " / " + tot + " (" + Math.round(ok / tot * 100) + "%)";
+  if (b) b.style.width = (ok / tot * 100) + "%";
+}
+function saveDone() { try { localStorage.setItem("bx-done", JSON.stringify(DONE)); } catch (e) {} }
+
+/* ---------- events ---------- */
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const a = el.dataset.act;
+  if (a === "lang") { L = L ? 0 : 1; try { localStorage.setItem("bx-lang", L ? "en" : "ar"); } catch (x) {} renderAll(); }
+  else if (a === "lv") { S.lv = el.dataset.lv; const p = comboPool(); if (!p.includes(S.cur)) S.cur = p[0]; document.querySelectorAll('[data-act="lv"]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lv === S.lv))); renderCombosList(); renderRoulette(); }
+  else if (a === "next") nextCombo();
+  else if (a === "tgo") toggleTimer();
+  else if (a === "tskip") skipTimer();
+  else if (a === "treset") resetTimer();
+  else if (a === "preset") { const p = PRESETS[+el.dataset.i]; TS.cfg.rounds = p.r; TS.cfg.work = p.w; TS.cfg.rest = p.t; resetTimer(); }
+  else if (a === "clear") { DONE = {}; saveDone(); applyChecks(); }
+  else if (a === "theme") { THEME = THEME === "auto" ? "light" : THEME === "light" ? "dark" : "auto"; store("bx-theme", THEME); applyTheme(); renderNav(); attachSpy(); }
+  else if (a === "add" || a === "rm") addSess(el.dataset.k);
+  else if (a === "drawer") setDrawer(!document.getElementById("drawer").classList.contains("open"));
+  else if (a === "copy") copySess();
+  else if (a === "clearSess") { SESS = []; store("bx-sess", SESS); renderSession(); }
+  else if (a === "log") toggleToday();
+  else if (a === "top") window.scrollTo({ top: 0, behavior: "smooth" });
+});
+document.addEventListener("input", e => {
+  if (e.target.id === "q") applyFilter();
+  if (e.target.id === "cAge") { HR_AGE = Math.min(90, Math.max(10, parseInt(e.target.value, 10) || 30)); store("bx-age", String(HR_AGE)); renderHR(); }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") setDrawer(false);
+  if (e.key === "/" && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); document.getElementById("q").focus(); }
+});
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.id === "cCall") { TS.callOn = t.checked; if (!t.checked) TS.call = null; drawTimer(); return; }
+  if (t.id === "cVoice") { TS.voice = t.checked; return; }
+  if (t.id === "cLv") { TS.callLv = t.value; return; }
+  if (t.id === "cEvery") { TS.every = Math.min(20, Math.max(4, parseInt(t.value, 10) || 8)); t.value = TS.every; return; }
+  if (t.dataset && t.dataset.id) { if (t.checked) DONE[t.dataset.id] = true; else delete DONE[t.dataset.id]; saveDone(); applyChecks(); return; }
+  const map = { cR: ["rounds", 1, 30], cW: ["work", 10, 900], cT: ["rest", 5, 300] };
+  if (map[t.id]) { const m = map[t.id], v = Math.min(m[2], Math.max(m[1], parseInt(t.value, 10) || m[1])); TS.cfg[m[0]] = v; if (TS.phase === "idle") resetTimer(); else drawTimer(); }
+});
+
+/* ---------- theme, session drawer, search, log, heart rate ---------- */
+let THEME = "auto", HR_AGE = 30, SESS = [], LOG = [];
+try {
+  THEME = localStorage.getItem("bx-theme") || "auto"; HR_AGE = +localStorage.getItem("bx-age") || 30;
+  SESS = JSON.parse(localStorage.getItem("bx-sess") || "[]") || []; LOG = JSON.parse(localStorage.getItem("bx-log") || "[]") || [];
+} catch (e) {}
+const store = (k, v) => { try { localStorage.setItem(k, typeof v === "string" ? v : JSON.stringify(v)); } catch (e) {} };
+const SV = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+const ICON = {
+  light: SV + '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  dark: SV + '<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>',
+  auto: SV + '<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 010 18z" fill="currentColor"/></svg>'
+};
+function applyTheme() { const r = document.documentElement; if (THEME === "auto") r.removeAttribute("data-theme"); else r.setAttribute("data-theme", THEME); }
+function toast(msg) { const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("show"), 1800); }
+
+function renderChrome() {
+  document.getElementById("q").placeholder = T(["ابحث عن تمرين أو ضربة... (اضغط /)", "Search an exercise or punch... (press /)"]);
+  document.getElementById("fabSess").setAttribute("aria-label", T(["جلستي", "My session"]));
+  document.getElementById("fabTop").setAttribute("aria-label", T(["للأعلى", "Back to top"]));
+  document.getElementById("dTitle").textContent = T(["جلستي", "My session"]);
+  document.getElementById("dClose").setAttribute("aria-label", T(["إغلاق", "Close"]));
+  document.getElementById("bCopy").textContent = T(["نسخ القائمة", "Copy list"]);
+  document.getElementById("bTimer").textContent = T(["افتح التايمر", "Open timer"]);
+  document.getElementById("bClear").textContent = T(["مسح الكل", "Clear all"]);
+}
+function setDrawer(on) {
+  const d = document.getElementById("drawer");
+  d.classList.toggle("open", on); document.getElementById("scrim").classList.toggle("open", on);
+  d.setAttribute("aria-hidden", String(!on));
+  if (on) document.getElementById("dClose").focus(); else document.getElementById("sessTxt").hidden = true;
+}
+function addSess(k) {
+  const i = SESS.indexOf(k);
+  if (i >= 0) { SESS.splice(i, 1); toast(T(["تمت الإزالة من جلستي", "Removed from my session"])); }
+  else { SESS.push(k); toast(T(["أضيف إلى جلستي", "Added to my session"])); }
+  store("bx-sess", SESS); renderSession(true);
+}
+function renderSession(bump) {
+  const items = SESS.filter(k => KEYS[k]);
+  const n = document.getElementById("sessN"); n.textContent = items.length;
+  if (bump) { n.classList.remove("bump"); void n.offsetWidth; n.classList.add("bump"); }
+  document.getElementById("sessList").innerHTML = items.length
+    ? items.map((k, i) => '<li><span class="si">' + (i + 1) + "</span><div><strong>" + T(KEYS[k].n) + "</strong>" + (KEYS[k].dose ? "<small>" + T(KEYS[k].dose) + "</small>" : "") + '</div><button class="x" type="button" data-act="rm" data-k="' + k + '" aria-label="' + T(["إزالة", "Remove"]) + '">&times;</button></li>').join("")
+    : '<li class="empty">' + T(["لا يوجد شيء بعد. اضغط + على أي تمرين لتبني حصتك.", "Nothing yet. Tap + on any exercise to build your workout."]) + "</li>";
+  document.querySelectorAll(".addbtn").forEach(b => { const on = SESS.includes(b.dataset.k); b.setAttribute("aria-pressed", String(on)); b.innerHTML = on ? "&#10003;" : "+"; });
+}
+function copySess() {
+  const items = SESS.filter(k => KEYS[k]); if (!items.length) return;
+  const txt = T(["جلستي", "My session"]) + "\n" + items.map((k, i) => (i + 1) + ". " + T(KEYS[k].n) + (KEYS[k].dose ? " : " + T(KEYS[k].dose) : "")).join("\n");
+  const ta = document.getElementById("sessTxt"); ta.value = txt;
+  const fb = () => { ta.hidden = false; ta.select(); };
+  try { navigator.clipboard.writeText(txt).then(() => toast(T(["تم النسخ", "Copied"]))).catch(fb); } catch (e) { fb(); }
+}
+
+function applyFilter() {
+  const q = (document.getElementById("q").value || "").trim().toLowerCase();
+  let total = 0;
+  document.querySelectorAll("#app section").forEach(sec => {
+    const cards = [...sec.querySelectorAll("[data-ex]")]; let vis = 0;
+    cards.forEach(c => { const ok = !q || c.dataset.s.includes(q); c.hidden = !ok; if (ok) vis++; });
+    sec.querySelectorAll(".grid").forEach(g => {
+      const ex = g.querySelectorAll("[data-ex]"); if (!ex.length) return;
+      const any = [...ex].some(c => !c.hidden); g.hidden = !any;
+      const p = g.previousElementSibling; if (p && p.classList.contains("sub2")) p.hidden = !any;
+    });
+    total += vis; sec.hidden = !!q && vis === 0;
+  });
+  document.getElementById("qc").textContent = q ? (total ? total + T([" نتيجة", " results"]) : T(["لا نتائج", "No results"])) : "";
+}
+
+const pad = n => String(n).padStart(2, "0");
+const dkey = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+function renderLog() {
+  const box = document.getElementById("logBox"); if (!box) return;
+  const set = new Set(LOG), today = dkey(new Date());
+  let streak = 0; const d = new Date(); if (!set.has(dkey(d))) d.setDate(d.getDate() - 1);
+  while (set.has(dkey(d))) { streak++; d.setDate(d.getDate() - 1); }
+  let last7 = 0; for (let i = 0; i < 7; i++) { const x = new Date(); x.setDate(x.getDate() - i); if (set.has(dkey(x))) last7++; }
+  let cells = ""; for (let i = 34; i >= 0; i--) { const x = new Date(); x.setDate(x.getDate() - i); const k = dkey(x); cells += '<i class="' + (set.has(k) ? "on" : "") + (k === today ? " today" : "") + '" style="--i:' + (34 - i) + '">' + x.getDate() + "</i>"; }
+  box.innerHTML = '<header class="ch"><h3>' + T(["سجل التمرين", "Training log"]) + "</h3></header>" +
+    '<div class="kpis"><div class="kpi"><b>' + streak + "</b><span>" + T(["أيام متتالية", "Day streak"]) + '</span></div><div class="kpi"><b>' + last7 + "</b><span>" + T(["آخر 7 أيام", "Last 7 days"]) + '</span></div><div class="kpi"><b>' + set.size + "</b><span>" + T(["إجمالي الحصص", "Total sessions"]) + "</span></div></div>" +
+    '<div class="lg">' + cells + "</div>" +
+    '<button class="btn ' + (set.has(today) ? "" : "p") + '" type="button" data-act="log">' + (set.has(today) ? T(["إلغاء تسجيل اليوم", "Undo today"]) : T(["سجلت تمرين اليوم", "I trained today"])) + "</button>";
+}
+function toggleToday() {
+  const k = dkey(new Date()), i = LOG.indexOf(k);
+  if (i >= 0) LOG.splice(i, 1); else { LOG.push(k); toast(T(["أحسنت! تم تسجيل حصة اليوم", "Nice work! Today's session is logged"])); }
+  store("bx-log", LOG); renderLog();
+}
+const HZ = [[["إحماء وتعافي", "Warm-up and recovery"], 0.5, 0.6, 0.35], [["تحمل أساسي", "Base endurance"], 0.6, 0.7, 0.5], [["هوائي متوسط", "Aerobic"], 0.7, 0.8, 0.65], [["شدة عالية (جولات الشوال)", "Hard (bag rounds)"], 0.8, 0.9, 0.82], [["أقصى جهد", "Max effort"], 0.9, 1, 1]];
+function renderHR() {
+  const out = document.getElementById("hrOut"); if (!out) return;
+  const mx = 220 - HR_AGE;
+  out.innerHTML = HZ.map((z, i) => '<div class="hz"><span>' + T(z[0]) + '</span><div class="hb"><i style="background:' + (i < 2 ? "var(--blue)" : "var(--red)") + ";opacity:" + (0.45 + i * 0.14) + '" data-w="' + Math.round(z[3] * 100) + '"></i></div><span>' + Math.round(mx * z[1]) + "-" + Math.round(mx * z[2]) + "</span></div>").join("");
+  requestAnimationFrame(() => requestAnimationFrame(() => out.querySelectorAll(".hb i").forEach(b => { b.style.width = b.dataset.w + "%"; })));
+}
+
+function fillStats() {
+  const vals = [[...document.querySelectorAll("[data-ex]")].filter(c => c.querySelector(".vid")).length, COMBO.length, document.querySelectorAll(".vid a").length, 12];
+  const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll(".stat b").forEach((b, i) => {
+    const v = vals[i]; if (still) { b.textContent = v; return; }
+    const t0 = performance.now();
+    (function f(t) { const p = Math.min(1, (t - t0) / 1200); b.textContent = Math.round(v * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(f); })(t0);
+  });
+}
+
+let IO = null, SPY = null;
+function attachReveal() {
+  const els = document.querySelectorAll(".card,.sh,.roul,.tbox");
+  if (IO) IO.disconnect();
+  if (!("IntersectionObserver" in window)) { els.forEach(e => e.classList.add("in")); return; }
+  IO = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); IO.unobserve(en.target); } }), { rootMargin: "0px 0px -6% 0px", threshold: 0.05 });
+  els.forEach((e, i) => { e.classList.add("rv"); e.style.setProperty("--d", (i % 5) * 70 + "ms"); IO.observe(e); });
+}
+function attachSpy() {
+  if (!("IntersectionObserver" in window)) return;
+  if (SPY) SPY.disconnect();
+  SPY = new IntersectionObserver(es => es.forEach(en => {
+    if (!en.isIntersecting) return;
+    document.querySelectorAll(".chips a").forEach(a => {
+      if (a.getAttribute("href") === "#" + en.target.id) { a.setAttribute("aria-current", "true"); a.scrollIntoView({ block: "nearest", inline: "center" }); }
+      else a.removeAttribute("aria-current");
+    });
+  }), { rootMargin: "-30% 0px -60% 0px" });
+  document.querySelectorAll("#app section").forEach(s => SPY.observe(s));
+}
+let ticking = false;
+window.addEventListener("scroll", () => {
+  if (ticking) return; ticking = true;
+  requestAnimationFrame(() => {
+    ticking = false;
+    const h = document.documentElement, max = h.scrollHeight - window.innerHeight, p = max > 0 ? window.scrollY / max : 0;
+    document.querySelector("#sp i").style.transform = "scaleX(" + p + ")";
+    document.getElementById("fabTop").classList.toggle("show", window.scrollY > 700);
+  });
+}, { passive: true });
+
+function renderAll() {
+  document.documentElement.lang = L ? "en" : "ar";
+  document.documentElement.dir = L ? "ltr" : "rtl";
+  applyTheme();
+  renderHero(); renderNav(); renderApp(); renderChrome();
+  renderCombosList(); renderRoulette(); applyChecks(); renderSession(); renderLog(); renderHR();
+  if (TS.phase === "idle") TS.left = TS.cfg.work * 1000;
+  document.getElementById("tCall").dataset.cur = "x";
+  drawTimer(); fillStats(); applyFilter(); attachReveal(); attachSpy();
+}
+/* ---------- export / import (JSON) ---------- */
+function exportData() {
+  const data = { app: "boxing-from-zero", version: 1, exportedAt: new Date().toISOString(), data: { lang: L ? "en" : "ar", theme: THEME, age: HR_AGE, done: DONE, sess: SESS, log: LOG } };
+  try {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = "boxing-backup-" + dkey(new Date()) + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast(T(["تم تصدير البيانات", "Data exported"]));
+  } catch (e) { toast(T(["تعذر التصدير", "Export failed"])); }
+}
+function importData(file) {
+  const bad = () => toast(T(["ملف غير صالح", "Invalid file"]));
+  if (!file) return;
+  const r = new FileReader();
+  r.onerror = bad;
+  r.onload = () => {
+    let j; try { j = JSON.parse(r.result); } catch (e) { return bad(); }
+    const d = j && (j.app === "boxing-from-zero" ? j.data : null);
+    if (!d || typeof d !== "object") return bad();
+    const done = {};
+    if (d.done && typeof d.done === "object" && !Array.isArray(d.done)) Object.keys(d.done).forEach(k => { if (/^c\d+_\d+$/.test(k) && d.done[k]) done[k] = true; });
+    DONE = done; saveDone();
+    SESS = Array.isArray(d.sess) ? [...new Set(d.sess.filter(k => typeof k === "string" && KEYS[k]))] : []; store("bx-sess", SESS);
+    LOG = Array.isArray(d.log) ? [...new Set(d.log.filter(k => typeof k === "string" && /^\d{4}-\d{2}-\d{2}$/.test(k)))] : []; store("bx-log", LOG);
+    if (["auto", "light", "dark"].includes(d.theme)) { THEME = d.theme; store("bx-theme", THEME); }
+    const age = parseInt(d.age, 10); if (age >= 10 && age <= 90) { HR_AGE = age; store("bx-age", String(HR_AGE)); }
+    if (d.lang === "en" || d.lang === "ar") { L = d.lang === "en" ? 1 : 0; store("bx-lang", d.lang); }
+    renderAll();
+    toast(T(["تم استيراد البيانات", "Data imported"]));
+  };
+  r.readAsText(file);
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  if (el.dataset.act === "export") exportData();
+  else if (el.dataset.act === "import") { const f = document.getElementById("impFile"); if (f) f.click(); }
+});
+document.addEventListener("change", e => {
+  if (e.target.id === "impFile") { importData(e.target.files[0]); e.target.value = ""; }
+});
+
+renderAll();
+</script>
+
+</body></html>
